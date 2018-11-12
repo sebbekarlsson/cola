@@ -29,6 +29,7 @@ typedef enum {
     _NOT_EQUALS,
     _EQUALS,
     _TYPE_STRING,
+    _TYPE_NUMBER,
     _TYPE_INTEGER,
     _TYPE_FLOAT,
     _TYPE_VOID,

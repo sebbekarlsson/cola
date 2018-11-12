@@ -2,7 +2,7 @@
 #include "includes/token.h"
 #include "includes/ast_node_binop.h"
 #include "includes/ast_node_unaryop.h"
-#include "includes/ast_node_integer.h"
+#include "includes/ast_node_number.h"
 #include <stdlib.h>
 
 
@@ -38,9 +38,9 @@ ast_node* parse_factor(parse_state* state) {
         // invalid pointer type
         return node;
 
-    } else if (tok->type == _TYPE_INTEGER) {
-        parse_eat(state, _TYPE_INTEGER);
-        ast_node_integer* node = init_ast_node_integer(tok);
+    } else if (tok->type == _TYPE_NUMBER) {
+        parse_eat(state, _TYPE_NUMBER);
+        ast_node_number* node = init_ast_node_number(tok);
         // invalid pointer type
         return node;
 
