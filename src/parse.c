@@ -1,6 +1,8 @@
 #include "includes/parse.h"
 #include "includes/token.h"
 #include "includes/ast_node_binop.h"
+#include "includes/ast_node_unaryop.h"
+#include "includes/ast_node_integer.h"
 #include <stdlib.h>
 
 
@@ -15,7 +17,40 @@ parse_state* parse_init(lex_state* lex) {
 
 void parse_eat(parse_state* state, int token_type) {};
 
-ast_node* parse_factor(parse_state* state) { return (void*)0; }
+ast_node* parse_factor(parse_state* state) {
+    token* tok = state->current_token;
+
+    if (tok->type == _OP_PLUS) {
+        parse_eat(state, _OP_PLUS);
+        ast_node_unaryop* node = init_ast_node_unaryop(tok, parse_factor(state));
+        // invalid pointer type
+        return node;
+
+    } else if (tok->type == _OP_SUBTRACT) {
+        parse_eat(state, _OP_SUBTRACT);
+        ast_node_unaryop* node = init_ast_node_unaryop(tok, parse_factor(state));
+        // invalid pointer type
+        return node;
+    
+    } else if (tok->type == _NOT_EQUALS) {
+        parse_eat(state, _NOT_EQUALS);
+        ast_node_unaryop* node = init_ast_node_unaryop(tok, parse_factor(state));
+        // invalid pointer type
+        return node;
+
+    } else if (tok->type == _TYPE_INTEGER) {
+        parse_eat(state, _TYPE_INTEGER);
+        ast_node_integer* node = init_ast_node_integer(tok);
+        // invalid pointer type
+        return node;
+
+    }/* else {
+        ast_node* node = parse_variable(state);
+        return node;
+    }*/
+
+    return parse_expr(state);
+}
 
 ast_node* parse_term(parse_state* state) {
     token* tok = (void*)0;
