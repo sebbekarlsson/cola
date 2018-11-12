@@ -122,6 +122,26 @@ ast_node* parse_expr(parse_state* state) {
     return node;
 }
 
+ast_node* parse_statement(parse_state* state) {
+    // we only know about expressions as of now
+    return parse_expr(state);
+};
+
+/* TODO: implement
+ * ast_node** parse_statement_list(parse_state* state) {
+    ast_node** results;
+    ast_node* node = parse_statement(state);
+
+    results.push_back(node);
+
+    while (this->current_token->type == _SEMI) {
+        parse_eat(state, _SEMI);
+        results.push_back(parse_statement(state));
+    }
+
+    return results;
+};*/
+
 ast_node* parse_any_statement(parse_state* state) {
     //ast_node** nodes; dynamic list
 

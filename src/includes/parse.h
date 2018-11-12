@@ -21,6 +21,8 @@ ast_node* parse_term(parse_state* state);
 
 ast_node* parse_expr(parse_state* state);
 
+ast_node* parse_statement(parse_state* state);
+
 ast_node* parse_any_statement(parse_state* state);
 
 ast_node* parse_parse(parse_state* state);
