@@ -31,7 +31,7 @@ ast_node* parse_factor(parse_state* state) {
         ast_node_unaryop* node = init_ast_node_unaryop(tok, parse_factor(state));
         // invalid pointer type
         return node;
-    
+
     } else if (tok->type == _NOT_EQUALS) {
         parse_eat(state, _NOT_EQUALS);
         ast_node_unaryop* node = init_ast_node_unaryop(tok, parse_factor(state));
@@ -47,7 +47,7 @@ ast_node* parse_factor(parse_state* state) {
     }/* else {
         ast_node* node = parse_variable(state);
         return node;
-    }*/
+        }*/
 
     return parse_expr(state);
 }
@@ -56,11 +56,11 @@ ast_node* parse_term(parse_state* state) {
     token* tok = (void*)0;
 
     ast_node* node = parse_factor(state);
-    
+
     while (
-        state->current_token->type == _OP_MULTIPLY ||
-        state->current_token->type == _OP_DIVIDE
-    ) {
+            state->current_token->type == _OP_MULTIPLY ||
+            state->current_token->type == _OP_DIVIDE
+          ) {
         tok = state->current_token;
 
         if (tok->type == _OP_MULTIPLY) {
@@ -81,18 +81,18 @@ ast_node* parse_expr(parse_state* state) {
 
     // invalid pointer type
     ast_node* node = parse_term(state);
-    
+
     while(
-        state->current_token->type == _OP_PLUS ||
-        state->current_token->type == _OP_SUBTRACT ||
-        state->current_token->type == _NOT_EQUALS ||
-        state->current_token->type == _LESS_THAN ||
-        state->current_token->type == _LARGER_THAN ||
-        state->current_token->type == _LESS_OR_EQUALS ||
-        state->current_token->type == _LARGER_OR_EQUALS ||
-        state->current_token->type == _EQUALS ||
-        state->current_token->type == _DOT
-    ) {
+            state->current_token->type == _OP_PLUS ||
+            state->current_token->type == _OP_SUBTRACT ||
+            state->current_token->type == _NOT_EQUALS ||
+            state->current_token->type == _LESS_THAN ||
+            state->current_token->type == _LARGER_THAN ||
+            state->current_token->type == _LESS_OR_EQUALS ||
+            state->current_token->type == _LARGER_OR_EQUALS ||
+            state->current_token->type == _EQUALS ||
+            state->current_token->type == _DOT
+         ) {
         tok = state->current_token;
 
         if (tok->type == _OP_PLUS) {
@@ -122,4 +122,22 @@ ast_node* parse_expr(parse_state* state) {
     return node;
 }
 
-ast_node* parse_parse() { return (void*)0; }
+ast_node* parse_any_statement(parse_state* state) {
+    //ast_node** nodes; dynamic list
+
+    //nodes = parse_statement_list(state);
+
+    //ast_node_compound* root = init_ast_node_compound((void*)0);
+
+    //for each (node)
+        //root->children.push_back(node);
+
+    //free nodes
+
+    //return root;
+    return (void*)0;
+}
+
+ast_node* parse_parse(parse_state* state) {
+    return parse_any_statement(state);
+}
