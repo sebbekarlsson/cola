@@ -3,6 +3,7 @@
 #include "includes/ast_node_binop.h"
 #include "includes/ast_node_unaryop.h"
 #include "includes/ast_node_number.h"
+#include "includes/Vector.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -32,32 +33,32 @@ ast_node* parse_factor(parse_state* state) {
         parse_eat(state, _OP_PLUS);
         ast_node_unaryop* node = init_ast_node_unaryop(tok, parse_factor(state));
         // invalid pointer type
-        return node;
+        return (ast_node*) node;
 
     } else if (tok->type == _OP_SUBTRACT) {
         parse_eat(state, _OP_SUBTRACT);
         ast_node_unaryop* node = init_ast_node_unaryop(tok, parse_factor(state));
         // invalid pointer type
-        return node;
+        return (ast_node*) node;
 
     } else if (tok->type == _NOT_EQUALS) {
         parse_eat(state, _NOT_EQUALS);
         ast_node_unaryop* node = init_ast_node_unaryop(tok, parse_factor(state));
         // invalid pointer type
-        return node;
+        return (ast_node*) node;
 
     } else if (tok->type == _TYPE_NUMBER) {
         parse_eat(state, _TYPE_NUMBER);
         ast_node_number* node = init_ast_node_number(tok);
         // invalid pointer type
-        return node;
+        return (ast_node*) node;
 
     }/* else {
         ast_node* node = parse_variable(state);
         return node;
         }*/
 
-    return parse_expr(state);
+    return (ast_node*) parse_expr(state);
 }
 
 ast_node* parse_term(parse_state* state) {
@@ -78,10 +79,10 @@ ast_node* parse_term(parse_state* state) {
         }
 
         // this probably wont work since `node` is of pointer type ast_node*
-        node = init_ast_node_binop(tok, node, parse_factor(state));
+        node = (ast_node*) init_ast_node_binop(tok, node, parse_factor(state));
     }
 
-    return node;
+    return (ast_node*) node;
 }
 
 ast_node* parse_expr(parse_state* state) {
@@ -124,7 +125,7 @@ ast_node* parse_expr(parse_state* state) {
         }
 
         // invalid pointer type
-        node = init_ast_node_binop(tok, node, parse_term(state));
+        node = (ast_node*) init_ast_node_binop(tok, node, parse_term(state));
     };
 
     return node;
@@ -135,37 +136,24 @@ ast_node* parse_statement(parse_state* state) {
     return parse_expr(state);
 };
 
-/* TODO: implement
- * ast_node** parse_statement_list(parse_state* state) {
- ast_node** results;
- ast_node* node = parse_statement(state);
+Vector parse_statement_list(parse_state* state) {
+    Vector nodes;
+    vector_init(&nodes);
 
- results.push_back(node);
+    ast_node* node = parse_statement(state);
 
- while (this->current_token->type == _SEMI) {
- parse_eat(state, _SEMI);
- results.push_back(parse_statement(state));
- }
+    vector_append(&nodes, node);
 
- return results;
- };*/
+    while (state->current_token->type == _SEMI) {
+        parse_eat(state, _SEMI);
+        vector_append(&nodes, parse_statement(state));
+    }
 
-ast_node* parse_any_statement(parse_state* state) {
-    //ast_node** nodes; dynamic list
-
-    //nodes = parse_statement_list(state);
-
-    //ast_node_compound* root = init_ast_node_compound((void*)0);
-
-    //for each (node)
-    //root->children.push_back(node);
-
-    //free nodes
-
-    //return root;
-    return (void*)0;
-}
+    return nodes;
+};
 
 ast_node* parse_parse(parse_state* state) {
-    return parse_any_statement(state);
+    parse_statement_list(state);
+
+    return (void*)0;
 }
