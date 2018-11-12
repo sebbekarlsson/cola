@@ -1,0 +1,18 @@
+comp productlist use httplib, json {
+    array<objects> get_products {
+        return json.parse(httplib.get("http://example.org/products"));
+    };
+
+    array<objects> yields {
+        @get_products();    
+    };
+};
+
+
+comp main use productlist {
+    void run {
+        foreach (product in productlist) {
+            print(product);    
+        };
+    };
+};

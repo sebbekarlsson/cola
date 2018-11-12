@@ -1,0 +1,21 @@
+comp dog {
+    string sound;
+
+    void init {
+        @sound = "Woff Woff!";
+    };
+
+    void bark {
+        print(@sound);
+    };
+    
+    void run {
+        @bark();
+    };  
+};
+
+comp main use dog {
+    void run {
+        run dog;    
+    };    
+};
