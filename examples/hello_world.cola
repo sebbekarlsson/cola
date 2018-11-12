@@ -1,3 +1,5 @@
 comp main {
-    print("hello")
+    void run {
+        print("hello")
+    }
 }
