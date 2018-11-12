@@ -15,7 +15,13 @@ parse_state* parse_init(lex_state* lex) {
     return state;
 };
 
-void parse_eat(parse_state* state, int token_type) {};
+void parse_eat(parse_state* state, int token_type) {
+    if (state->current_token->type == token_type) {
+        state->current_token = lex_get_next_token(state->lex);
+    } else {
+        // TODO: error
+    }
+};
 
 ast_node* parse_factor(parse_state* state) {
     token* tok = state->current_token;
@@ -129,18 +135,18 @@ ast_node* parse_statement(parse_state* state) {
 
 /* TODO: implement
  * ast_node** parse_statement_list(parse_state* state) {
-    ast_node** results;
-    ast_node* node = parse_statement(state);
+ ast_node** results;
+ ast_node* node = parse_statement(state);
 
-    results.push_back(node);
+ results.push_back(node);
 
-    while (this->current_token->type == _SEMI) {
-        parse_eat(state, _SEMI);
-        results.push_back(parse_statement(state));
-    }
+ while (this->current_token->type == _SEMI) {
+ parse_eat(state, _SEMI);
+ results.push_back(parse_statement(state));
+ }
 
-    return results;
-};*/
+ return results;
+ };*/
 
 ast_node* parse_any_statement(parse_state* state) {
     //ast_node** nodes; dynamic list
@@ -150,7 +156,7 @@ ast_node* parse_any_statement(parse_state* state) {
     //ast_node_compound* root = init_ast_node_compound((void*)0);
 
     //for each (node)
-        //root->children.push_back(node);
+    //root->children.push_back(node);
 
     //free nodes
 
