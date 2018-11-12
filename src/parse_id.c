@@ -11,6 +11,8 @@ token* parse_id(token* token) {
         token->type = _TYPE_FLOAT;
     else if (strcmp(token->value, "void") == 0)
         token->type = _TYPE_VOID;
+    else if (strcmp(token->value, "struct") == 0)
+        token->type = _TYPE_STRUCT;
 
     return token;
 };

@@ -77,6 +77,7 @@
 * string
 * array
 * map
+* struct
 
 ### Note
 > The `array` data-type can hold any sort of type, but the type must

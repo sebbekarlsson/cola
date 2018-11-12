@@ -27,6 +27,7 @@ typedef enum {
     _TYPE_STRING,
     _TYPE_INTEGER,
     _TYPE_FLOAT,
-    _TYPE_VOID
+    _TYPE_VOID,
+    _TYPE_STRUCT
 } tokentype;
 #endif
