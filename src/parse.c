@@ -4,6 +4,7 @@
 #include "includes/ast_node_unaryop.h"
 #include "includes/ast_node_number.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 
 parse_state* parse_init(lex_state* lex) {
@@ -19,6 +20,7 @@ void parse_eat(parse_state* state, int token_type) {
     if (state->current_token->type == token_type) {
         state->current_token = lex_get_next_token(state->lex);
     } else {
+        printf("Unexpected token_type: `%d`", token_type);
         // TODO: error
     }
 };
