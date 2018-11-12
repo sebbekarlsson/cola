@@ -9,7 +9,7 @@
 
 parse_state* parse_init(lex_state* lex) {
     parse_state* state;
-    state = malloc(sizeof(struct LEX_STATE_STRUCT));
+    state = malloc(sizeof(struct PARSE_STATE_STRUCT));
     state->lex = lex;
     state->current_token = lex_get_next_token(state->lex);
 
