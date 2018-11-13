@@ -20,7 +20,7 @@ void parse_eat(parse_state* state, int token_type) {
     if (state->current_token->type == token_type) {
         state->current_token = lex_get_next_token(state->lex);
     } else {
-        printf("Unexpected token_type: `%d`", token_type);
+        printf("Unexpected token_type: `%d` (was expecting `%d`)", state->current_token->type, token_type);
         // TODO: error
     }
 };
@@ -56,6 +56,8 @@ ast_node* parse_factor(parse_state* state) {
         // invalid pointer type
         return (ast_node*) node;
 
+    } else if (tok->type == _TYPE_COMPONENT) {
+        return (ast_node*) parse_component(state);
     } else {
         printf("Unexpected token_type: `%d`\n", tok->type);
         return (void*)0;
@@ -135,8 +137,11 @@ ast_node* parse_expr(parse_state* state) {
 }
 
 ast_node* parse_statement(parse_state* state) {
-    // we only know about expressions as of now
-    return parse_expr(state);
+    if (state->current_token->type == _TYPE_COMPONENT) {
+        return (ast_node*) parse_component(state);
+    } else {
+        return parse_expr(state);
+    }
 };
 
 ast_array* parse_statement_list(parse_state* state) {
@@ -146,6 +151,10 @@ ast_array* parse_statement_list(parse_state* state) {
 
     while (state->current_token->type == _SEMI) {
         parse_eat(state, _SEMI);
+
+        if (state->current_token->type == _RBRACE)
+            break;
+
         ast_array_append(nodes, parse_statement(state));
     }
 
@@ -155,6 +164,22 @@ ast_array* parse_statement_list(parse_state* state) {
 ast_node_compound* parse_compound(parse_state* state) {
     return init_ast_node_compound(
         (void*)0, parse_statement_list(state)
+    );
+};
+
+ast_node_component* parse_component(parse_state* state) {
+    parse_eat(state, _TYPE_COMPONENT);
+    
+    token* name = state->current_token;
+    parse_eat(state, _ID);
+    parse_eat(state, _LBRACE);
+    ast_node_compound* body = parse_compound(state);
+    parse_eat(state, _RBRACE);
+
+    return init_ast_node_component(
+        name,
+        name,
+        body
     );
 };
 
