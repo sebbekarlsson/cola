@@ -86,6 +86,6 @@ ast_node* interpret_visit_integer(ast_node_integer* node) {
 
 ast_node* interpret_visit_component(ast_node_component* node) {
     printf("visit component %s \n", node->name->value);
-    interpret_visit(node->body);
+    interpret_visit((ast_node*) node->body);
     return (ast_node*) node;
 }

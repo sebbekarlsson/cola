@@ -172,6 +172,22 @@ ast_node_component* parse_component(parse_state* state) {
     
     token* name = state->current_token;
     parse_eat(state, _ID);
+
+    token_array* deps = init_token_array();
+
+    if (state->current_token->type == _USE) {
+        parse_eat(state, _USE);
+       
+        parse_eat(state, _ID); 
+        token_array_append(deps, state->current_token);
+
+        while (state->current_token->type == _COMMA) {
+            parse_eat(state, _COMMA);
+            parse_eat(state, _ID); 
+            token_array_append(deps, state->current_token);
+        }
+    }
+
     parse_eat(state, _LBRACE);
     ast_node_compound* body = parse_compound(state);
     parse_eat(state, _RBRACE);
@@ -179,7 +195,8 @@ ast_node_component* parse_component(parse_state* state) {
     return init_ast_node_component(
         name,
         name,
-        body
+        body,
+        deps
     );
 };
 

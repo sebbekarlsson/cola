@@ -11,6 +11,7 @@ typedef enum {
     _OP_DIVIDE,
     _OP_MOD,
     _OP_PERCENTAGE,
+    _USE,
     _LPAREN,
     _RPAREN,
     _LBRACE,

@@ -2,6 +2,7 @@
 #define COLA_PARSE_H
 #include "lex.h"
 #include "ast_node.h"
+#include "token_array.h"
 #include "ast_node_compound.h"
 #include "ast_node_component.h"
 
