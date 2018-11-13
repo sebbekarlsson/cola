@@ -99,4 +99,14 @@ ast_node* interpret_visit_component(ast_node_component* node) {
 
 ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node) {
     printf("visit variable definition\n");
+
+    if (node->value) {
+        ast_node* value = interpret_visit(node->value);
+
+        if (node->data_type == _TYPE_INTEGER && value->type != AST_TYPE_INTEGER)
+            printf("Can only assign int to int values\n");
+        // TODO add more type-checking here...
+    }
+
+    return (ast_node*) node;
 }

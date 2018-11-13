@@ -1,6 +1,6 @@
 comp hello {
     int something;
-    int id = 86;    
+    int id = 5;
 };
 
 comp main use hello {

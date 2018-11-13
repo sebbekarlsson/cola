@@ -219,6 +219,8 @@ ast_node_variable_definition* parse_variable_definition(parse_state* state) {
     if (state->current_token->type == _EQUALS) {
         parse_eat(state, _EQUALS);
         value = parse_expr(state);
+    } else {
+        value = (void*)0;
     }
 
     return init_ast_node_variable_definition(
