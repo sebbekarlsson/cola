@@ -32,9 +32,9 @@ ast_node* interpret_visit(ast_node* node) {
 }
 
 ast_node* interpret_visit_compound(ast_node_compound* node) {
-    for (int i = 0; i < node->nodes.size; i++) {
-        ast_node child_node = vector_get(&node->nodes, i);
-        interpret_visit(&child_node);
+    for (int i = 0; i < node->nodes->size; i++) {
+        ast_node* child_node = ast_array_get(node->nodes, i);
+        interpret_visit(child_node);
     }
 
     return (ast_node*) node;

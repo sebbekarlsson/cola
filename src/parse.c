@@ -139,15 +139,14 @@ ast_node* parse_statement(parse_state* state) {
     return parse_expr(state);
 };
 
-Vector parse_statement_list(parse_state* state) {
-    Vector nodes;
-    vector_init(&nodes);
+ast_array* parse_statement_list(parse_state* state) {
+    ast_array* nodes = init_ast_array();
 
-    vector_append(&nodes, parse_statement(state));
+    ast_array_append(nodes, parse_statement(state));
 
     while (state->current_token->type == _SEMI) {
         parse_eat(state, _SEMI);
-        vector_append(&nodes, parse_statement(state));
+        ast_array_append(nodes, parse_statement(state));
     }
 
     return nodes;

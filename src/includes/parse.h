@@ -3,7 +3,6 @@
 #include "lex.h"
 #include "ast_node.h"
 #include "ast_node_compound.h"
-#include "Vector.h"
 
 
 typedef struct PARSE_STATE_STRUCT {
