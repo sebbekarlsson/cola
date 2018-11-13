@@ -1,3 +1,1 @@
-comp hello {
-    1 + 2;
-}
+comp hello { comp world { 1 + 2 }; }
