@@ -117,6 +117,11 @@ token* lex_get_next_token(lex_state* state) {
             return init_token(_LARGER_THAN, str);
         }
 
+        else if (state->current_char == '=') {
+            lex_advance(state);
+            return init_token(_EQUALS, str);
+        }
+
         else if (state->current_char == '"') {
             free(str);
             return init_token(_STRING, lex_parse_string(state));

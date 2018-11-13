@@ -1,5 +1,10 @@
-comp hello { 1 + 2 };
+comp hello {
+    int something;
+    int id = 86;    
+};
 
 comp main use hello {
-    5 + 5;
+    int x = 2;
+    int y = 3;
+    int z = 4;    
 }

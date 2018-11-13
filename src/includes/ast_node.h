@@ -10,7 +10,8 @@ typedef struct AST_NODE_STRUCT {
         AST_TYPE_NUMBER,
         AST_TYPE_INTEGER,
         AST_TYPE_COMPOUND,
-        AST_TYPE_COMPONENT
+        AST_TYPE_COMPONENT,
+        AST_TYPE_VARIABLE_DEFINITION
     } type;
     token* tok;
 } ast_node;

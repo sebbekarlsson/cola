@@ -26,6 +26,9 @@ ast_node* interpret_visit(ast_node* node) {
         case AST_TYPE_COMPONENT:
             return interpret_visit_component((ast_node_component*)node);
             break;
+        case AST_TYPE_VARIABLE_DEFINITION:
+            return interpret_visit_variable_definition((ast_node_variable_definition*)node);
+            break;
         default:
             printf("Unhandled AST node (%d)\n", node->type);
             return (void*)0;
@@ -92,4 +95,8 @@ ast_node* interpret_visit_component(ast_node_component* node) {
 
     interpret_visit((ast_node*) node->body);
     return (ast_node*) node;
+}
+
+ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node) {
+    printf("visit variable definition\n");
 }

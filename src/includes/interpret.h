@@ -7,6 +7,7 @@
 #include "ast_node_number.h"
 #include "ast_node_integer.h"
 #include "ast_node_component.h"
+#include "ast_node_variable_definition.h"
 
 
 /*typedef struct INTERPRET_STATE_STRUCT {
@@ -24,5 +25,6 @@ ast_node* interpret_visit_binop(ast_node_binop* node);
 ast_node* interpret_visit_number(ast_node_number* node);
 ast_node* interpret_visit_integer(ast_node_integer* node);
 ast_node* interpret_visit_component(ast_node_component* node);
+ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node);
 
 #endif

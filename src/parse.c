@@ -139,6 +139,8 @@ ast_node* parse_expr(parse_state* state) {
 ast_node* parse_statement(parse_state* state) {
     if (state->current_token->type == _TYPE_COMPONENT) {
         return (ast_node*) parse_component(state);
+    } else if (state->current_token->type == _DATA_TYPE) {
+        return (ast_node*) parse_variable_definition(state);
     } else {
         return parse_expr(state);
     }
@@ -199,6 +201,32 @@ ast_node_component* parse_component(parse_state* state) {
         deps
     );
 };
+
+ast_node_variable_definition* parse_variable_definition(parse_state* state) {
+    char* data_type_name = state->current_token->value;
+    int data_type = _TYPE_INTEGER;
+    ast_node* value;
+
+    if (strcmp(data_type_name, "int") == 0)
+        data_type = _TYPE_INTEGER;
+    else if (strcmp(data_type_name, "float") == 0)
+        data_type = _TYPE_FLOAT;
+
+    parse_eat(state, _DATA_TYPE);
+    token* tok = state->current_token;
+    parse_eat(state, _ID);
+
+    if (state->current_token->type == _EQUALS) {
+        parse_eat(state, _EQUALS);
+        value = parse_expr(state);
+    }
+
+    return init_ast_node_variable_definition(
+        tok,
+        data_type,
+        value        
+    );
+}
 
 ast_node_compound* parse_parse(parse_state* state) {
     return parse_compound(state);

@@ -5,6 +5,7 @@
 #include "token_array.h"
 #include "ast_node_compound.h"
 #include "ast_node_component.h"
+#include "ast_node_variable_definition.h"
 
 
 typedef struct PARSE_STATE_STRUCT {
@@ -35,5 +36,7 @@ ast_node_compound* parse_compound(parse_state* state);
 ast_node_component* parse_component(parse_state* state);
 
 ast_node_compound* parse_parse(parse_state* state);
+
+ast_node_variable_definition* parse_variable_definition(parse_state* state);
 
 #endif

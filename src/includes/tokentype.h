@@ -5,6 +5,7 @@ typedef enum {
     _ID,
     _INTEGER,
     _STRING,
+    _DATA_TYPE,
     _OP_PLUS,
     _OP_SUBTRACT,
     _OP_MULTIPLY,
