@@ -3,7 +3,6 @@
 #include "includes/ast_node_binop.h"
 #include "includes/ast_node_unaryop.h"
 #include "includes/ast_node_number.h"
-#include "includes/Vector.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -24,6 +23,10 @@ void parse_eat(parse_state* state, int token_type) {
         printf("Unexpected token_type: `%d`", token_type);
         // TODO: error
     }
+};
+
+ast_node* parse_variable(parse_state* state) {
+    return (ast_node*) init_ast_node_number(init_token(_TYPE_NUMBER, "1"));
 };
 
 ast_node* parse_factor(parse_state* state) {
@@ -53,10 +56,10 @@ ast_node* parse_factor(parse_state* state) {
         // invalid pointer type
         return (ast_node*) node;
 
-    }/* else {
-        ast_node* node = parse_variable(state);
-        return node;
-        }*/
+    } else {
+        printf("Unexpected token_type: `%d`\n", tok->type);
+        return (void*)0;
+    }
 
     return (ast_node*) parse_expr(state);
 }
@@ -140,9 +143,7 @@ Vector parse_statement_list(parse_state* state) {
     Vector nodes;
     vector_init(&nodes);
 
-    ast_node* node = parse_statement(state);
-
-    vector_append(&nodes, node);
+    vector_append(&nodes, parse_statement(state));
 
     while (state->current_token->type == _SEMI) {
         parse_eat(state, _SEMI);
@@ -152,8 +153,12 @@ Vector parse_statement_list(parse_state* state) {
     return nodes;
 };
 
-ast_node* parse_parse(parse_state* state) {
-    parse_statement_list(state);
+ast_node_compound* parse_compound(parse_state* state) {
+    return init_ast_node_compound(
+        (void*)0, parse_statement_list(state)
+    );
+};
 
-    return (void*)0;
+ast_node_compound* parse_parse(parse_state* state) {
+    return parse_compound(state);
 }

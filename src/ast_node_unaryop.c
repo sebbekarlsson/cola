@@ -7,6 +7,7 @@ ast_node_unaryop* init_ast_node_unaryop(token* tok, ast_node* right) {
     ast = malloc(sizeof(ast_node_unaryop));
     ast->tok = tok;
     ast->right = right;
+    ast->base.type = AST_TYPE_UNARYOP;
 
     return ast;
 }

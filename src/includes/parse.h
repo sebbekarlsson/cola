@@ -2,6 +2,8 @@
 #define COLA_PARSE_H
 #include "lex.h"
 #include "ast_node.h"
+#include "ast_node_compound.h"
+#include "Vector.h"
 
 
 typedef struct PARSE_STATE_STRUCT {
@@ -15,6 +17,8 @@ parse_state* parse_init();
 
 void parse_eat(parse_state* state, int token_type);
 
+ast_node* parse_variable(parse_state* state);
+
 ast_node* parse_factor(parse_state* state);
 
 ast_node* parse_term(parse_state* state);
@@ -25,6 +29,8 @@ ast_node* parse_statement(parse_state* state);
 
 ast_node* parse_any_statement(parse_state* state);
 
-ast_node* parse_parse(parse_state* state);
+ast_node_compound* parse_compound(parse_state* state);
+
+ast_node_compound* parse_parse(parse_state* state);
 
 #endif

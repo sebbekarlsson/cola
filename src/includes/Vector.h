@@ -4,9 +4,9 @@
 #include "ast_node.h"
 
 typedef struct {
-  int size;
-  int capacity;
-  ast_node *data;
+    int size;
+    int capacity;
+    ast_node *data;
 } Vector;
 
 void vector_init(Vector *vector);

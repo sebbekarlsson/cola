@@ -124,7 +124,7 @@ token* lex_get_next_token(lex_state* state) {
 
         else if (isdigit(state->current_char)) {
             free(str);
-            return init_token(_INTEGER, lex_parse_number(state));
+            return init_token(_TYPE_NUMBER, lex_parse_number(state));
         }
 
         else if (isalnum(state->current_char)) {

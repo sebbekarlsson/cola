@@ -4,6 +4,13 @@
 
 
 typedef struct AST_NODE_STRUCT {
+    enum {
+        AST_TYPE_BINOP,
+        AST_TYPE_UNARYOP,
+        AST_TYPE_NUMBER,
+        AST_TYPE_INTEGER,
+        AST_TYPE_COMPOUND
+    } type;
     token* tok;
 } ast_node;
 

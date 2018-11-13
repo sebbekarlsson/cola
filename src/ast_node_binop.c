@@ -8,6 +8,7 @@ ast_node_binop* init_ast_node_binop(token* tok, ast_node* left, ast_node* right)
     ast->tok = tok;
     ast->left = left;
     ast->right = right;
+    ast->base.type = AST_TYPE_BINOP;
 
     return ast;
 }
