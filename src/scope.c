@@ -19,3 +19,20 @@ void save_variable_definition(scope* sc, ast_node_variable_definition* node) {
 void save_function_definition(scope* sc, ast_node_function_definition* node) {
     ast_array_append(sc->functions, (ast_node*) node);
 }
+
+
+ast_node_variable_definition* get_variable_definition(scope* sc, char* name) {
+    ast_node_variable_definition* definition;
+
+    for (int i = 0; i < sc->variables->size; i++) {
+        definition = (ast_node_variable_definition*) ast_array_get(sc->variables, i);
+
+        if (strcmp(definition->tok->value, name) == 0) {
+            break;
+        } else {
+            definition = (void*)0;
+        }
+    }
+
+    return definition;
+}

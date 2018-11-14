@@ -28,6 +28,9 @@ ast_node* interpret_visit(ast_node* node) {
         case AST_TYPE_COMPONENT:
             return interpret_visit_component((ast_node_component*)node);
             break;
+        case AST_TYPE_VARIABLE:
+            return interpret_visit_variable((ast_node_variable*)node);
+            break;
         case AST_TYPE_VARIABLE_DEFINITION:
             return interpret_visit_variable_definition((ast_node_variable_definition*)node);
             break;
@@ -65,6 +68,7 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
         
         if (node->tok->type == _OP_PLUS) {
             sprintf(buff, "%d", atoi(left_integer->tok->value) + atoi(right_integer->tok->value));
+            printf("CALC: %s\n", buff);
             return (ast_node*) init_ast_node_integer(init_token(AST_TYPE_INTEGER, buff));
         } else if (node->tok->type == _OP_SUBTRACT) {
             sprintf(buff, "%d", atoi(left_integer->tok->value) - atoi(right_integer->tok->value));
@@ -99,6 +103,22 @@ ast_node* interpret_visit_component(ast_node_component* node) {
         free(node->deps);
 
     interpret_visit((ast_node*) node->body);
+    return (ast_node*) node;
+}
+
+ast_node* interpret_visit_variable(ast_node_variable* node) {
+    printf("visit variable %s \n", node->tok->value);
+
+    ast_node_variable_definition* definition = get_variable_definition(
+        (scope*) ast_node_get_scope((ast_node*)node),
+        node->tok->value
+    );
+
+    if (definition)
+        return interpret_visit(definition->value);
+    else
+        printf("could not find definition for %s\n", node->tok->value);
+
     return (ast_node*) node;
 }
 

@@ -1,5 +1,2 @@
-comp main {
-    function void run {
-        1 + 2;    
-    };    
-};
+int x = 5;
+int b = x + 8;

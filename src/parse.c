@@ -25,8 +25,11 @@ void parse_eat(parse_state* state, int token_type) {
     }
 };
 
-ast_node* parse_variable(parse_state* state) {
-    return (ast_node*) init_ast_node_number(init_token(_TYPE_NUMBER, "1"));
+ast_node_variable* parse_variable(parse_state* state) {
+    ast_node_variable* var = init_ast_node_variable(state->current_token, (void*)0);
+    parse_eat(state, _ID);
+
+    return var;
 };
 
 ast_node* parse_factor(parse_state* state) {
@@ -58,6 +61,8 @@ ast_node* parse_factor(parse_state* state) {
 
     } else if (tok->type == _TYPE_COMPONENT) {
         return (ast_node*) parse_component(state);
+    } else if (tok->type == _ID) {
+        return (ast_node*) parse_variable(state);
     } else {
         printf("Unexpected token_type: `%d`\n", tok->type);
         return (void*)0;
