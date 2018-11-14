@@ -16,6 +16,8 @@ token* lex_get_next_token(lex_state* state);
 
 void lex_skip_whitespace(lex_state* state);
 
+char lex_peek_next(lex_state* state, int start);
+
 char* lex_parse_id(lex_state* state);
 
 char* lex_parse_number(lex_state* state);

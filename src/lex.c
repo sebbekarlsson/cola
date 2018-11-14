@@ -134,7 +134,7 @@ token* lex_get_next_token(lex_state* state) {
 
         else if (isalnum(state->current_char)) {
             free(str);
-            return parse_id(init_token(_ID, lex_parse_id(state)));
+            return parse_id(state, init_token(_ID, lex_parse_id(state)));
         } else {
             printf("Unexpected token: `%s` (%d) \n", str, (int) state->current_char);
             break;
@@ -158,6 +158,24 @@ void lex_skip_whitespace(lex_state* state) {
     while ((state->current_char == ' ' ||  (int) state->current_char == 10) && state->current_char != '\0')
         lex_advance(state);
 };
+
+char lex_peek_next(lex_state* state, int start) {
+    int peek_pos = start;
+    char c = '\0';
+
+    while (peek_pos < (int)strlen(state->buffer)) {
+        c = state->buffer[peek_pos];
+
+        if (c == '\0' || c == ' ' || c == '\n') {
+            peek_pos++;
+            continue;
+        } else {
+            break;
+        }
+    }
+
+    return c;
+}
 
 /**
  * Parses an ID, this is quite vague but it is chunks of string which is

@@ -2,7 +2,7 @@
 #include "includes/tokentype.h"
 
 
-token* parse_id(token* token) {
+token* parse_id(lex_state* state, token* token) {
     if (
         strcmp(token->value, "string") == 0 ||
         strcmp(token->value, "int") == 0 ||
@@ -17,6 +17,8 @@ token* parse_id(token* token) {
         token->type = _USE;
     } else if (strcmp(token->value, "function") == 0) {
         token->type = _TYPE_FUNCTION;
+    } else if (lex_peek_next(state, state->pos) == '(') {
+        token->type = _FUNCTION_CALL;
     }
 
     return token;

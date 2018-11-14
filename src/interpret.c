@@ -31,6 +31,9 @@ ast_node* interpret_visit(ast_node* node) {
         case AST_TYPE_VARIABLE:
             return interpret_visit_variable((ast_node_variable*)node);
             break;
+        case AST_TYPE_FUNCTION_CALL:
+            return interpret_visit_function_call((ast_node_function_call*)node);
+            break;
         case AST_TYPE_VARIABLE_DEFINITION:
             return interpret_visit_variable_definition((ast_node_variable_definition*)node);
             break;
@@ -95,12 +98,12 @@ ast_node* interpret_visit_integer(ast_node_integer* node) {
 }
 
 ast_node* interpret_visit_component(ast_node_component* node) {
-    printf("visit component %s \n", node->name->value);
-
     if (node->deps->size == 0)
         free(node->deps);
 
-    interpret_visit((ast_node*) node->body);
+    if (strcmp(node->name->value, "main") == 0)
+        interpret_visit((ast_node*)node->body);
+
     return (ast_node*) node;
 }
 
@@ -120,6 +123,20 @@ ast_node* interpret_visit_variable(ast_node_variable* node) {
     return (ast_node*) node;
 }
 
+ast_node* interpret_visit_function_call(ast_node_function_call* node) {
+    ast_node_function_definition* definition = get_function_definition(
+        (scope*) ast_node_get_scope((ast_node*) node),
+        node->tok->value 
+    );
+
+    if (definition) {
+        return interpret_visit((ast_node*)definition->body);
+    } else {
+        printf("could not find definition for %s\n", node->tok->value);
+        return (void*)0;
+    }
+}
+
 ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node) {
     node->value = interpret_visit(node->value);
 
@@ -134,8 +151,6 @@ ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node
 }
 
 ast_node* interpret_visit_function_definition(ast_node_function_definition* node) {
-    printf("visit function definition (%s) \n", node->tok->value);
-
     //if (node->body) {
         // visit body
     //}

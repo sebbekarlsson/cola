@@ -20,7 +20,7 @@ void parse_eat(parse_state* state, int token_type) {
     if (state->current_token->type == token_type) {
         state->current_token = lex_get_next_token(state->lex);
     } else {
-        printf("Unexpected token_type: `%d` (was expecting `%d`)", state->current_token->type, token_type);
+        printf("Unexpected token_type: `%d` (was expecting `%d`)\n", state->current_token->type, token_type);
         // TODO: error
     }
 };
@@ -31,6 +31,28 @@ ast_node_variable* parse_variable(parse_state* state) {
 
     return var;
 };
+
+ast_node_function_call* parse_function_call(parse_state* state) {
+    token* tok = state->current_token;
+    parse_eat(state, _FUNCTION_CALL);
+    ast_array* args = init_ast_array();
+
+    parse_eat(state, _LPAREN);
+   
+    ast_array_append(args, (ast_node*) parse_expr(state));
+
+    while (state->current_token->type == _COMMA) {
+        parse_eat(state, _COMMA);
+        ast_array_append(args, (ast_node*) parse_expr(state));
+    }
+
+    parse_eat(state, _RPAREN);
+
+    return init_ast_node_function_call(
+        tok,
+        args        
+    );
+}
 
 ast_node* parse_factor(parse_state* state) {
     token* tok = state->current_token;
@@ -63,7 +85,9 @@ ast_node* parse_factor(parse_state* state) {
         return (ast_node*) parse_component(state);
     } else if (tok->type == _ID) {
         return (ast_node*) parse_variable(state);
-    }  else if (tok->type == _LPAREN) {
+    } else if (tok->type == _FUNCTION_CALL) {
+        return (ast_node*) parse_function_call(state);
+    } else if (tok->type == _LPAREN) {
         parse_eat(state, _LPAREN);
         ast_node* node = parse_expr(state);
         parse_eat(state, _RPAREN);
@@ -153,6 +177,8 @@ ast_node* parse_statement(parse_state* state) {
         return (ast_node*) parse_variable_definition(state);
     } else if (state->current_token->type == _TYPE_FUNCTION) {
         return (ast_node*) parse_function_definition(state);
+    }  else if (state->current_token->type == _FUNCTION_CALL) {
+        return (ast_node*) parse_function_call(state);
     } else if (state->current_token->type == _ID || state->current_token->type == _TYPE_NUMBER) {
         return parse_expr(state);
     } else {

@@ -1,2 +1,11 @@
-int a = 5 + 5;
-int b = (a + 1) / 2;
+comp main {
+    comp bop {
+        1 + 2;
+    };
+    
+    function void something {
+        int x = 2 + 2;
+    };
+
+    something(1);
+};

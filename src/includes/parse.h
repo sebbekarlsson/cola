@@ -6,6 +6,7 @@
 #include "ast_node_compound.h"
 #include "ast_node_component.h"
 #include "ast_node_variable.h"
+#include "ast_node_function_call.h"
 #include "ast_node_variable_definition.h"
 #include "ast_node_function_definition.h"
 
@@ -22,6 +23,8 @@ parse_state* parse_init();
 void parse_eat(parse_state* state, int token_type);
 
 ast_node_variable* parse_variable(parse_state* state);
+
+ast_node_function_call* parse_function_call(parse_state* state);
 
 ast_node* parse_factor(parse_state* state);
 
