@@ -7,18 +7,18 @@
 > Here is what it looks like:
 
     comp productlist use httplib, json {
-        array<map> get_products {
+        function array<map> get_products {
             return json.parse(httplib.get('http://example.org/products'));
         };
 
-        array<map> yields {
+        function array<map> yields {
             return @get_products();    
         };
     };
 
 
     comp main use productlist {
-        void run {
+        function void run {
             foreach (product in productlist) {
                 print(product);    
             };
@@ -38,13 +38,13 @@
 > The `run` method in a component can be executed through the `run` statement:
 
     comp mycomponent {
-        void run {
+        function void run {
             print("Hello World!")    
         };
     };
 
     comp othercomponent use mycomponent {
-        void run {
+        function void run {
             run mycomponent;  // will execute `run` method in `mycomponent`
         };
     };
@@ -54,13 +54,13 @@
 > it was another data-type. For example:
 
     component PI {
-        float yields {
+        function float yields {
             return 3.14;
         };    
     };
 
     component main use PI {
-        void run {
+        function void run {
             print(PI * 0.5);    
         };    
     };

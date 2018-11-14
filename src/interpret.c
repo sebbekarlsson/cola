@@ -1,5 +1,7 @@
 #include "includes/interpret.h"
 #include "includes/strutils.h"
+#include "includes/scope.h"
+#include "includes/ast_node.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -28,6 +30,9 @@ ast_node* interpret_visit(ast_node* node) {
             break;
         case AST_TYPE_VARIABLE_DEFINITION:
             return interpret_visit_variable_definition((ast_node_variable_definition*)node);
+            break;
+        case AST_TYPE_FUNCTION_DEFINITION:
+            return interpret_visit_function_definition((ast_node_function_definition*)node);
             break;
         default:
             printf("Unhandled AST node (%d)\n", node->type);
@@ -98,7 +103,7 @@ ast_node* interpret_visit_component(ast_node_component* node) {
 }
 
 ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node) {
-    printf("visit variable definition\n");
+    printf("visit variable definition (%s) \n", node->tok->value);
 
     if (node->value) {
         ast_node* value = interpret_visit(node->value);
@@ -107,6 +112,30 @@ ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node
             printf("Can only assign int to int values\n");
         // TODO add more type-checking here...
     }
+
+    save_variable_definition(
+        (scope*)ast_node_get_scope((
+                ast_node*)node
+         ),
+        node
+    );
+
+    return (ast_node*) node;
+}
+
+ast_node* interpret_visit_function_definition(ast_node_function_definition* node) {
+    printf("visit function definition (%s) \n", node->tok->value);
+
+    //if (node->body) {
+        // visit body
+    //}
+
+    save_function_definition(
+        (scope*)ast_node_get_scope((
+                ast_node*)node
+         ),
+        node
+    );
 
     return (ast_node*) node;
 }

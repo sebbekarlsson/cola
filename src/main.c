@@ -2,11 +2,16 @@
 #include <stdlib.h>
 #include "includes/io.h"
 #include "includes/lex.h"
+#include "includes/scope.h"
 #include "includes/parse.h"
 #include "includes/interpret.h"
 
 
+scope* global_scope;
+
 int main(int argc, char* argv[]) {
+    global_scope = init_scope();
+
     char* file_contents = read_file(argv[1]);
     lex_state* lex_state = lex_init(file_contents);
     parse_state* parse_state = parse_init(lex_state);

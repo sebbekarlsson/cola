@@ -141,8 +141,12 @@ ast_node* parse_statement(parse_state* state) {
         return (ast_node*) parse_component(state);
     } else if (state->current_token->type == _DATA_TYPE) {
         return (ast_node*) parse_variable_definition(state);
-    } else {
+    } else if (state->current_token->type == _TYPE_FUNCTION) {
+        return (ast_node*) parse_function_definition(state);
+    } else if (state->current_token->type == _ID || state->current_token->type == _TYPE_NUMBER) {
         return parse_expr(state);
+    } else {
+        return (void*)0;
     }
 };
 
@@ -154,10 +158,12 @@ ast_array* parse_statement_list(parse_state* state) {
     while (state->current_token->type == _SEMI) {
         parse_eat(state, _SEMI);
 
-        if (state->current_token->type == _RBRACE)
+        ast_node* next_statement = parse_statement(state);
+
+        if (!next_statement)
             break;
 
-        ast_array_append(nodes, parse_statement(state));
+        ast_array_append(nodes, next_statement);
     }
 
     return nodes;
@@ -229,6 +235,49 @@ ast_node_variable_definition* parse_variable_definition(parse_state* state) {
         value        
     );
 }
+
+ast_node_function_definition* parse_function_definition(parse_state* state) {
+    parse_eat(state, _TYPE_FUNCTION);
+
+    char* data_type_name = state->current_token->value;
+    int data_type = _TYPE_INTEGER;
+    ast_node_compound* body;
+    ast_array* args = init_ast_array();
+
+    if (strcmp(data_type_name, "int") == 0)
+        data_type = _TYPE_INTEGER;
+    else if (strcmp(data_type_name, "float") == 0)
+        data_type = _TYPE_FLOAT;
+    else if (strcmp(data_type_name, "void") == 0)
+        data_type = _TYPE_VOID;
+
+    parse_eat(state, _DATA_TYPE);
+    token* tok = state->current_token;
+    parse_eat(state, _ID);
+
+    if (state->current_token->type == _LPAREN) {
+        parse_eat(state, _LPAREN);
+       
+        ast_array_append(args, (ast_node*) parse_variable_definition(state));
+
+        while (state->current_token->type == _COMMA) {
+            parse_eat(state, _COMMA);
+            ast_array_append(args, (ast_node*) parse_variable_definition(state));
+        }
+    }
+
+    parse_eat(state, _LBRACE);
+    body = parse_compound(state);
+    parse_eat(state, _RBRACE);
+
+    return init_ast_node_function_definition(
+        tok,
+        data_type,
+        args,
+        body 
+    );
+
+};
 
 ast_node_compound* parse_parse(parse_state* state) {
     return parse_compound(state);

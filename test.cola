@@ -1,10 +1,5 @@
-comp hello {
-    int something;
-    int id = 5;
+comp main {
+    function void run {
+        1 + 2;    
+    };    
 };
-
-comp main use hello {
-    int x = 2;
-    int y = 3;
-    int z = 4;    
-}

@@ -1,5 +1,5 @@
 comp main {
-    void run {
+    function void run {
         print("hello");
     };
 };

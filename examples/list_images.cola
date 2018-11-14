@@ -1,11 +1,11 @@
 comp images use system as fs {
-    array<str> get_images {
+    function array<str> get_images {
         return fs.glob("*.jpg")
     };
 };
 
 comp main use images {
-    void run {
+    function void run {
         print(images.get_images());    
     };
 };
