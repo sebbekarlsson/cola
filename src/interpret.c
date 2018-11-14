@@ -66,19 +66,15 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
         
         if (node->tok->type == _OP_PLUS) {
             sprintf(tok->value, "%d", atoi(left_integer->tok->value) + atoi(right_integer->tok->value));
-        printf("CALC: %s\n", tok->value);
             return (ast_node*) init_ast_node_integer(tok);
         } else if (node->tok->type == _OP_SUBTRACT) {
             sprintf(tok->value, "%d", atoi(left_integer->tok->value) - atoi(right_integer->tok->value));
-        printf("CALC: %s\n", tok->value);
             return (ast_node*) init_ast_node_integer(tok); 
         } else if (node->tok->type == _OP_DIVIDE) {
             sprintf(tok->value, "%d", atoi(left_integer->tok->value) / atoi(right_integer->tok->value));
-        printf("CALC: %s\n", tok->value);
             return (ast_node*) init_ast_node_integer(tok); 
         } else if (node->tok->type == _OP_MULTIPLY) {
             sprintf(tok->value, "%d", atoi(left_integer->tok->value) * atoi(right_integer->tok->value));
-        printf("CALC: %s\n", tok->value);
             return (ast_node*) init_ast_node_integer(tok); 
         }
 
