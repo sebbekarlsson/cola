@@ -1,2 +1,2 @@
-int x = 5;
-int b = x + 8;
+int a = 5 + 5;
+int b = (a + 1) / 2;

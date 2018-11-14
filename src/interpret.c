@@ -56,30 +56,32 @@ ast_node* interpret_visit_compound(ast_node_compound* node) {
 }
 
 ast_node* interpret_visit_binop(ast_node_binop* node) {
-    ast_node* left = node->left;
-    ast_node* right = node->right;
-    left = interpret_visit(left);
-    right = interpret_visit(right);
-    char buff[16];
+    ast_node* left = interpret_visit(node->left);
+    ast_node* right = interpret_visit(node->right);
 
     if (left->type == AST_TYPE_INTEGER && right->type == AST_TYPE_INTEGER) {
         ast_node_integer* left_integer = (ast_node_integer*) left;
         ast_node_integer* right_integer = (ast_node_integer*) right;
+        token* tok = left_integer->tok;
         
         if (node->tok->type == _OP_PLUS) {
-            sprintf(buff, "%d", atoi(left_integer->tok->value) + atoi(right_integer->tok->value));
-            printf("CALC: %s\n", buff);
-            return (ast_node*) init_ast_node_integer(init_token(AST_TYPE_INTEGER, buff));
+            sprintf(tok->value, "%d", atoi(left_integer->tok->value) + atoi(right_integer->tok->value));
+        printf("CALC: %s\n", tok->value);
+            return (ast_node*) init_ast_node_integer(tok);
         } else if (node->tok->type == _OP_SUBTRACT) {
-            sprintf(buff, "%d", atoi(left_integer->tok->value) - atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(init_token(AST_TYPE_INTEGER, buff)); 
+            sprintf(tok->value, "%d", atoi(left_integer->tok->value) - atoi(right_integer->tok->value));
+        printf("CALC: %s\n", tok->value);
+            return (ast_node*) init_ast_node_integer(tok); 
         } else if (node->tok->type == _OP_DIVIDE) {
-            sprintf(buff, "%d", atoi(left_integer->tok->value) / atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(init_token(AST_TYPE_INTEGER, buff)); 
+            sprintf(tok->value, "%d", atoi(left_integer->tok->value) / atoi(right_integer->tok->value));
+        printf("CALC: %s\n", tok->value);
+            return (ast_node*) init_ast_node_integer(tok); 
         } else if (node->tok->type == _OP_MULTIPLY) {
-            sprintf(buff, "%d", atoi(left_integer->tok->value) * atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(init_token(AST_TYPE_INTEGER, buff)); 
+            sprintf(tok->value, "%d", atoi(left_integer->tok->value) * atoi(right_integer->tok->value));
+        printf("CALC: %s\n", tok->value);
+            return (ast_node*) init_ast_node_integer(tok); 
         }
+
     }
 
     return (ast_node*) node;
@@ -107,31 +109,23 @@ ast_node* interpret_visit_component(ast_node_component* node) {
 }
 
 ast_node* interpret_visit_variable(ast_node_variable* node) {
-    printf("visit variable %s \n", node->tok->value);
 
     ast_node_variable_definition* definition = get_variable_definition(
         (scope*) ast_node_get_scope((ast_node*)node),
         node->tok->value
     );
 
-    if (definition)
+    if (definition) {
         return interpret_visit(definition->value);
-    else
+    } else {
         printf("could not find definition for %s\n", node->tok->value);
+    }
 
     return (ast_node*) node;
 }
 
 ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node) {
-    printf("visit variable definition (%s) \n", node->tok->value);
-
-    if (node->value) {
-        ast_node* value = interpret_visit(node->value);
-
-        if (node->data_type == _TYPE_INTEGER && value->type != AST_TYPE_INTEGER)
-            printf("Can only assign int to int values\n");
-        // TODO add more type-checking here...
-    }
+    node->value = interpret_visit(node->value);
 
     save_variable_definition(
         (scope*)ast_node_get_scope((

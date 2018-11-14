@@ -5,8 +5,6 @@ typedef struct AST_NUMBER_STRUCT {
     ast_node base;
 
     token* tok;
-
-    ast_node* right;
 } ast_node_number;
 
 

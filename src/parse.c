@@ -63,6 +63,11 @@ ast_node* parse_factor(parse_state* state) {
         return (ast_node*) parse_component(state);
     } else if (tok->type == _ID) {
         return (ast_node*) parse_variable(state);
+    }  else if (tok->type == _LPAREN) {
+        parse_eat(state, _LPAREN);
+        ast_node* node = parse_expr(state);
+        parse_eat(state, _RPAREN);
+        return node;
     } else {
         printf("Unexpected token_type: `%d`\n", tok->type);
         return (void*)0;
