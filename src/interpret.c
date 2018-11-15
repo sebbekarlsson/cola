@@ -124,7 +124,26 @@ ast_node* interpret_visit_variable(ast_node_variable* node) {
     );
 
     if (definition) {
-        return interpret_visit(definition->value);
+        ast_node* value = interpret_visit(definition->value);
+
+        // TODO: make this type-checking prettier
+
+        if (definition->data_type == _DATA_TYPE_INTEGER && value->type != AST_TYPE_INTEGER) {
+            printf("wrong data_type for %s\n", node->tok->value);
+            return (void*)0; // TODO: exit program
+        }
+
+        if (definition->data_type == _DATA_TYPE_FLOAT && value->type != AST_TYPE_FLOAT) {
+            printf("wrong data_type for %s\n", node->tok->value);
+            return (void*)0; // TODO: exit program
+        }
+
+        if (definition->data_type == _DATA_TYPE_VOID && value->type != AST_TYPE_EMPTY) {
+            printf("wrong data_type for %s\n", node->tok->value);
+            return (void*)0; // TODO: exit program
+        }
+
+        return value;
     } else {
         printf("could not find definition for %s\n", node->tok->value);
     }

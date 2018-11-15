@@ -1,12 +1,4 @@
-comp main {
-    comp bop {
-        1 + 2;
-    };
-    
-    function void something {
-        int x = 2 + 2;
-        print(x);
-    };
+void x;
+int p = 3;
 
-    something();
-};
+print(p * 2);

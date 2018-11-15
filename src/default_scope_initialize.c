@@ -23,7 +23,7 @@ void default_scope_initialize(scope* sc) {
 
     ast_node_function_definition* definition = init_ast_node_function_definition(
         init_token(_ID, "print"),
-        _TYPE_VOID,
+        _DATA_TYPE_VOID,
         args,
         (void*)0
     );
