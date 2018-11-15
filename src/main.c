@@ -5,12 +5,15 @@
 #include "includes/scope.h"
 #include "includes/parse.h"
 #include "includes/interpret.h"
+#include "includes/default_scope_initialize.h"
 
 
 scope* global_scope;
 
 int main(int argc, char* argv[]) {
     global_scope = init_scope();
+
+    default_scope_initialize(global_scope);
 
     char* file_contents = read_file(argv[1]);
     lex_state* lex_state = lex_init(file_contents);

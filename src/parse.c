@@ -38,12 +38,14 @@ ast_node_function_call* parse_function_call(parse_state* state) {
     ast_array* args = init_ast_array();
 
     parse_eat(state, _LPAREN);
-   
-    ast_array_append(args, (ast_node*) parse_expr(state));
 
-    while (state->current_token->type == _COMMA) {
-        parse_eat(state, _COMMA);
+    if (state->current_token->type != _RPAREN) {
         ast_array_append(args, (ast_node*) parse_expr(state));
+
+        while (state->current_token->type == _COMMA) {
+            parse_eat(state, _COMMA);
+            ast_array_append(args, (ast_node*) parse_expr(state));
+        }
     }
 
     parse_eat(state, _RPAREN);

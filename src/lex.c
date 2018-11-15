@@ -37,11 +37,7 @@ token* lex_get_next_token(lex_state* state) {
     while (state->current_char != '\0') {
         char* str = char_to_string(state->current_char); 
 
-        if (state->current_char == '\0') {
-            return init_token(_EOF, str);
-        }
-
-        else if (state->current_char == ' ' || (int)state->current_char == 10) {
+        if (state->current_char == ' ' || (int)state->current_char == 10 || state->current_char == '\0') {
             lex_skip_whitespace(state);
             free(str);
             continue;

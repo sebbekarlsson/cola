@@ -4,6 +4,7 @@
 #include "ast_node.h"
 #include "ast_node_compound.h"
 #include "ast_node_binop.h"
+#include "ast_node_empty.h"
 #include "ast_node_number.h"
 #include "ast_node_integer.h"
 #include "ast_node_component.h"
@@ -23,6 +24,7 @@
 interpret_state* interpret_init();*/
 
 ast_node* interpret_visit(ast_node* node);
+ast_node* interpret_visit_empty(ast_node_empty* node);
 ast_node* interpret_visit_compound(ast_node_compound* node);
 ast_node* interpret_visit_binop(ast_node_binop* node);
 ast_node* interpret_visit_number(ast_node_number* node);

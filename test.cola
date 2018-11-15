@@ -5,7 +5,8 @@ comp main {
     
     function void something {
         int x = 2 + 2;
+        print(x);
     };
 
-    something(1);
+    something();
 };

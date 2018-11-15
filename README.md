@@ -85,3 +85,7 @@
 
 > The `map` data-type can also hold any sort of type and specified like:  
 > `map<str, int> ages;` or `map<string, array<int>> fav_numbers;`
+
+## Built-in methods
+> These are the built-in methods that currently exists:
+* **print** - _print something to stdout_ (takes an infinite list of arguments)

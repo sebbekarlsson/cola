@@ -6,6 +6,7 @@ struct scope;
 
 typedef struct AST_NODE_STRUCT {
     enum {
+        AST_TYPE_EMPTY,
         AST_TYPE_BINOP,
         AST_TYPE_UNARYOP,
         AST_TYPE_NUMBER,

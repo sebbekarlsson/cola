@@ -6,6 +6,8 @@
 #include <stdlib.h>
 
 
+extern scope* global_scope;
+
 ast_node* interpret_visit(ast_node* node) {
     if (!node) {
         printf("Encountered a NULL node\n");
@@ -18,6 +20,9 @@ ast_node* interpret_visit(ast_node* node) {
             break;
         case AST_TYPE_BINOP:
             return interpret_visit_binop((ast_node_binop*)node);
+            break;
+        case AST_TYPE_EMPTY:
+            return interpret_visit_empty((ast_node_empty*)node);
             break;
         case AST_TYPE_NUMBER:
             return interpret_visit_number((ast_node_number*)node);
@@ -48,6 +53,10 @@ ast_node* interpret_visit(ast_node* node) {
 
     return node;
 }
+
+ast_node* interpret_visit_empty(ast_node_empty* node) {
+    return (ast_node*) node;
+};
 
 ast_node* interpret_visit_compound(ast_node_compound* node) {
     for (int i = 0; i < node->nodes->size; i++) {
@@ -129,7 +138,28 @@ ast_node* interpret_visit_function_call(ast_node_function_call* node) {
         node->tok->value 
     );
 
+    if (!definition) {
+        // definition not found in the nodes scope, so let's look for it
+        // in the global scope.
+        definition = get_function_definition(
+            global_scope,
+            node->tok->value
+        );
+    }
+
     if (definition) {
+        ast_array* visited_args = init_ast_array();
+
+        for (int i = 0; i < node->args->size; i++) {
+            ast_array_append(
+                visited_args,
+                interpret_visit(ast_array_get(node->args, i))
+            );
+        }
+
+        if (definition->call) {
+            return interpret_visit(definition->call(visited_args));
+        }
         return interpret_visit((ast_node*)definition->body);
     } else {
         printf("could not find definition for %s\n", node->tok->value);

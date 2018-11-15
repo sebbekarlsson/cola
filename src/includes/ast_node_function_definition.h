@@ -11,6 +11,7 @@ typedef struct AST_FUNCTION_DEFINITION_STRUCT {
     int data_type;
     ast_array* args;
     ast_node_compound* body;
+    ast_node* (*call)();
 } ast_node_function_definition;
 
 
