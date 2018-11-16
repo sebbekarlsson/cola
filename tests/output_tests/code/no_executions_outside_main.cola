@@ -1,0 +1,7 @@
+comp hello {
+    function void run {
+        print(1);    
+    };
+
+    run();
+};
