@@ -4,7 +4,8 @@
 
 typedef struct TOKEN_ARRAY_STRUCT {
     unsigned int size;
-    token* elements[];
+    size_t memsize;
+    token** elements;
 } token_array;
 
 token_array* init_token_array();

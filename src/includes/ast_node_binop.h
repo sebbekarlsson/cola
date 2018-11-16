@@ -6,6 +6,8 @@ typedef struct AST_BINOP_STRUCT {
 
     token* tok;
 
+    char* value;
+
     ast_node* left;
     ast_node* right;
 } ast_node_binop;

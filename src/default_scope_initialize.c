@@ -2,6 +2,7 @@
 #include "includes/scope.h"
 #include "includes/ast_node_integer.h"
 #include "includes/ast_node_empty.h"
+#include "includes/ast_node_char.h"
 #include <stdio.h>
 
 ast_node* print(ast_array* args) {
@@ -11,6 +12,9 @@ ast_node* print(ast_array* args) {
         if (node->type == AST_TYPE_INTEGER) {
             ast_node_integer* node_integer = (ast_node_integer*) node;
             printf("%s\n", node_integer->tok->value);
+        } else if (node->type == AST_TYPE_CHAR) {
+            ast_node_char* node_char = (ast_node_char*) node;
+            printf("%s\n", node_char->tok->value);
         }
     }
 

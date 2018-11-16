@@ -6,7 +6,8 @@ extern scope* global_scope;
 
 ast_node* init_ast_node(token* tok) {
     ast_node* ast;
-    ast = malloc(sizeof(ast_node));
+    ast = calloc(1, sizeof(ast_node));
+    ast->sc = malloc(sizeof(scope));
     ast->tok = tok;
 
     return ast;

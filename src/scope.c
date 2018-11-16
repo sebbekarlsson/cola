@@ -44,10 +44,16 @@ ast_node_function_definition* get_function_definition(scope* sc, char* name) {
     for (int i = 0; i < sc->functions->size; i++) {
         definition = (ast_node_function_definition*) ast_array_get(sc->functions, i);
 
+        if (definition) {
+            if (definition->tok) {
+                if (definition->tok->value) {
         if (strcmp(definition->tok->value, name) == 0) {
             break;
         } else {
             definition = (void*)0;
+        }
+            }
+        }
         }
     }
 

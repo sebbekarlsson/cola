@@ -1,0 +1,11 @@
+comp main {
+    int x = 2;
+    int y = 50;
+
+    function void run {
+        int value = x * y;
+        print(value);    
+    };
+
+    run();
+};

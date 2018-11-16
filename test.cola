@@ -1,4 +1,12 @@
-void x;
-int p = 3;
+comp main {
+    int x = 1024;
+    int y = 8;
+    char m = 'a';
 
-print(p * 2);
+    function void run {
+        print(x / 8);
+        print(m);
+    };
+
+    run();
+};

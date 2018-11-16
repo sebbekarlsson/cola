@@ -24,4 +24,6 @@ char* lex_parse_number(lex_state* state);
 
 char* lex_parse_string(lex_state* state);
 
+char* lex_parse_char(lex_state* state);
+
 #endif

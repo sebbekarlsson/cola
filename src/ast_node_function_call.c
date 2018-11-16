@@ -4,7 +4,7 @@
 
 ast_node_function_call* init_ast_node_function_call(token* tok, ast_array* args) {
     ast_node_function_call* ast;
-    ast = malloc(sizeof(ast_node_function_call));
+    ast = calloc(1, sizeof(ast_node_function_call));
     ast->tok = tok;
     ast->args = args;
     ast->base.type = AST_TYPE_FUNCTION_CALL;

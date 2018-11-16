@@ -13,6 +13,7 @@ typedef struct AST_NODE_STRUCT {
         AST_TYPE_INTEGER,
         AST_TYPE_FLOAT,
         AST_TYPE_STRING,
+        AST_TYPE_CHAR,
         AST_TYPE_COMPOUND,
         AST_TYPE_COMPONENT,
         AST_TYPE_VARIABLE,

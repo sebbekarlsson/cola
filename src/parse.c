@@ -1,9 +1,12 @@
 #include "includes/parse.h"
 #include "includes/token.h"
+#include "includes/error.h"
+#include "includes/data_type_utils.h"
 #include "includes/ast_node_binop.h"
 #include "includes/ast_node_unaryop.h"
 #include "includes/ast_node_number.h"
 #include "includes/ast_node_empty.h"
+#include "includes/ast_node_char.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -81,6 +84,12 @@ ast_node* parse_factor(parse_state* state) {
     } else if (tok->type == _NUMBER) {
         parse_eat(state, _NUMBER);
         ast_node_number* node = init_ast_node_number(tok);
+        // invalid pointer type
+        return (ast_node*) node;
+
+    } else if (tok->type == _CHAR) {
+        parse_eat(state, _CHAR);
+        ast_node_char* node = init_ast_node_char(tok);
         // invalid pointer type
         return (ast_node*) node;
 
@@ -249,19 +258,8 @@ ast_node_component* parse_component(parse_state* state) {
 
 ast_node_variable_definition* parse_variable_definition(parse_state* state) {
     char* data_type_name = state->current_token->value;
-    int data_type = _DATA_TYPE_INTEGER;
+    int data_type = name_to_data_type(data_type_name);
     ast_node* value;
-
-    if (strcmp(data_type_name, "int") == 0) {
-        data_type = _DATA_TYPE_INTEGER;
-    } else if (strcmp(data_type_name, "float") == 0) {
-        data_type = _DATA_TYPE_FLOAT;
-    } else if (strcmp(data_type_name, "void") == 0) {
-        data_type = _DATA_TYPE_VOID;
-    } else {
-        printf("Unknown data_type_name %s\n", data_type_name);
-        return (void*)0; // TODO: exit program
-    }
 
     parse_eat(state, _DATA_TYPE);
     token* tok = state->current_token;
@@ -274,20 +272,19 @@ ast_node_variable_definition* parse_variable_definition(parse_state* state) {
         // TODO: make this prettier
         if (value->type != AST_TYPE_BINOP && value->type != AST_TYPE_VARIABLE && value->type != AST_TYPE_FUNCTION_CALL) {
             if (data_type == _DATA_TYPE_INTEGER && (value->type != AST_TYPE_INTEGER && value->type != AST_TYPE_NUMBER)) {
-                printf("can only assign numbers to _DATA_TYPE_INTEGER\n");
-                return (void*)0; // TODO: exit program
+                error_in_parser("can only assign numbers to _DATA_TYPE_INTEGER");
             }
             if (data_type == _DATA_TYPE_FLOAT && value->type != (value->type != AST_TYPE_FLOAT && value->type != AST_TYPE_NUMBER)) {
-                printf("can only assign numbers to _DATA_TYPE_FLOAT\n");
-                return (void*)0; // TODO: exit program
+                error_in_parser("can only assign numbers to _DATA_TYPE_FLOAT");
             }
             if (data_type == _DATA_TYPE_STRING && value->type != AST_TYPE_STRING) {
-                printf("can only assign strings to _DATA_TYPE_STRING\n");
-                return (void*)0; // TODO: exit program
+                error_in_parser("can only assign strings to _DATA_TYPE_STRING");
             }
             if (data_type == _DATA_TYPE_VOID && value->type != AST_TYPE_EMPTY) {
-                printf("can only assign empty to _DATA_TYPE_VOID\n");
-                return (void*)0; // TODO: exit program
+                error_in_parser("can only assign empty to _DATA_TYPE_VOID");
+            }
+            if (data_type == _DATA_TYPE_CHAR && value->type != AST_TYPE_CHAR) {
+                error_in_parser("can only assign char to _DATA_TYPE_CHAR");
             }
         }
     } else {
@@ -305,20 +302,9 @@ ast_node_function_definition* parse_function_definition(parse_state* state) {
     parse_eat(state, _TYPE_FUNCTION);
 
     char* data_type_name = state->current_token->value;
-    int data_type = _DATA_TYPE_INTEGER;
+    int data_type = name_to_data_type(data_type_name);
     ast_node_compound* body;
     ast_array* args = init_ast_array();
-
-    if (strcmp(data_type_name, "int") == 0) {
-        data_type = _DATA_TYPE_INTEGER;
-    } else if (strcmp(data_type_name, "float") == 0) {
-        data_type = _DATA_TYPE_FLOAT;
-    } else if (strcmp(data_type_name, "void") == 0) {
-        data_type = _DATA_TYPE_VOID;
-    } else {
-        printf("Unknown data_type_name %s\n", data_type_name);
-        return (void*)0; // TODO: exit program
-    }
 
     parse_eat(state, _DATA_TYPE);
     token* tok = state->current_token;

@@ -1,7 +1,8 @@
 #include "includes/interpret.h"
 #include "includes/strutils.h"
-#include "includes/scope.h"
 #include "includes/ast_node.h"
+#include "includes/error.h"
+#include "includes/scope.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -26,6 +27,9 @@ ast_node* interpret_visit(ast_node* node) {
             break;
         case AST_TYPE_NUMBER:
             return interpret_visit_number((ast_node_number*)node);
+            break;
+        case AST_TYPE_CHAR:
+            return interpret_visit_char((ast_node_char*)node);
             break;
         case AST_TYPE_INTEGER:
             return interpret_visit_integer((ast_node_integer*)node);
@@ -54,9 +58,13 @@ ast_node* interpret_visit(ast_node* node) {
     return node;
 }
 
+ast_node* interpret_visit_char(ast_node_char* node) {
+    return (ast_node*) node;
+}
+
 ast_node* interpret_visit_empty(ast_node_empty* node) {
     return (ast_node*) node;
-};
+}
 
 ast_node* interpret_visit_compound(ast_node_compound* node) {
     for (int i = 0; i < node->nodes->size; i++) {
@@ -74,20 +82,19 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
     if (left->type == AST_TYPE_INTEGER && right->type == AST_TYPE_INTEGER) {
         ast_node_integer* left_integer = (ast_node_integer*) left;
         ast_node_integer* right_integer = (ast_node_integer*) right;
-        token* tok = left_integer->tok;
         
         if (node->tok->type == _OP_PLUS) {
-            sprintf(tok->value, "%d", atoi(left_integer->tok->value) + atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(tok);
+            sprintf(node->value, "%d", atoi(left_integer->tok->value) + atoi(right_integer->tok->value));
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
         } else if (node->tok->type == _OP_SUBTRACT) {
-            sprintf(tok->value, "%d", atoi(left_integer->tok->value) - atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(tok); 
+            sprintf(node->value, "%d", atoi(left_integer->tok->value) - atoi(right_integer->tok->value));
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
         } else if (node->tok->type == _OP_DIVIDE) {
-            sprintf(tok->value, "%d", atoi(left_integer->tok->value) / atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(tok); 
+            sprintf(node->value, "%d", atoi(left_integer->tok->value) / atoi(right_integer->tok->value));
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
         } else if (node->tok->type == _OP_MULTIPLY) {
-            sprintf(tok->value, "%d", atoi(left_integer->tok->value) * atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(tok); 
+            sprintf(node->value, "%d", atoi(left_integer->tok->value) * atoi(right_integer->tok->value));
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
         }
 
     }
@@ -129,23 +136,28 @@ ast_node* interpret_visit_variable(ast_node_variable* node) {
         // TODO: make this type-checking prettier
 
         if (definition->data_type == _DATA_TYPE_INTEGER && value->type != AST_TYPE_INTEGER) {
-            printf("wrong data_type for %s\n", node->tok->value);
-            return (void*)0; // TODO: exit program
+            char msg[32];
+            sprintf(msg, "wrong data_type for: %s", node->tok->value);
+            error_in_interpreter(msg);
         }
 
         if (definition->data_type == _DATA_TYPE_FLOAT && value->type != AST_TYPE_FLOAT) {
-            printf("wrong data_type for %s\n", node->tok->value);
-            return (void*)0; // TODO: exit program
+            char msg[32];
+            sprintf(msg, "wrong data_type for: %s", node->tok->value);
+            error_in_interpreter(msg);
         }
 
         if (definition->data_type == _DATA_TYPE_VOID && value->type != AST_TYPE_EMPTY) {
-            printf("wrong data_type for %s\n", node->tok->value);
-            return (void*)0; // TODO: exit program
+            char msg[32];
+            sprintf(msg, "wrong data_type for: %s", node->tok->value);
+            error_in_interpreter(msg);
         }
 
         return value;
     } else {
-        printf("could not find definition for %s\n", node->tok->value);
+        char msg[32];
+        sprintf(msg, "could not find definition for: %s", node->tok->value);
+        error_in_interpreter(msg);
     }
 
     return (ast_node*) node;

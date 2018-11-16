@@ -1,0 +1,8 @@
+int x = 10;
+int y = 100;
+
+print(x * y);
+print(x + y);
+print(y / x);
+print(y - x);
+print((y - x) + 5);

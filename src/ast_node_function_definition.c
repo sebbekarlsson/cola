@@ -10,7 +10,7 @@ ast_node_function_definition* init_ast_node_function_definition(
     ast_node_compound* body
 ) {
     ast_node_function_definition* ast;
-    ast = malloc(sizeof(ast_node_function_definition));
+    ast = calloc(1, sizeof(ast_node_function_definition));
     ast->tok = tok;
     ast->data_type = data_type;
     ast->args = args;

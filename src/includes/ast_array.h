@@ -4,7 +4,8 @@
 
 typedef struct AST_ARRAY_STRUCT {
     unsigned int size;
-    ast_node* elements[];
+    size_t memsize;
+    ast_node** elements;
 } ast_array;
 
 ast_array* init_ast_array();

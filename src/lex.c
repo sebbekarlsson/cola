@@ -1,6 +1,7 @@
 #include "includes/lex.h"
 #include "includes/strutils.h"
 #include "includes/parse_id.h"
+#include "includes/error.h"
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -121,6 +122,11 @@ token* lex_get_next_token(lex_state* state) {
         else if (state->current_char == '"') {
             free(str);
             return init_token(_STRING, lex_parse_string(state));
+        }
+
+        else if (state->current_char == '\'') {
+            free(str);
+            return init_token(_CHAR, lex_parse_char(state));
         }
 
         else if (isdigit(state->current_char)) {
@@ -272,6 +278,39 @@ char* lex_parse_string(lex_state* state) {
         strcat(buff, charstr);
         lex_advance(state);
         free(charstr);
+    }
+
+    lex_advance(state);
+
+    return buff;
+}
+
+char* lex_parse_char(lex_state* state) {
+    lex_advance(state);
+
+    char* buff;
+    char* charstr;
+
+    buff = calloc(2, sizeof(char*));
+    charstr = char_to_string(state->current_char);
+    strcat(buff, charstr);
+    lex_advance(state);
+    free(charstr);
+    int count = 0;
+
+    while (state->current_char != '\0') {
+        if (state->current_char == '\'')
+            break;
+
+        if (count >= 1)
+            error_in_lexer("Characters can only have one character");
+
+        buff = realloc(buff, strlen(buff) + (sizeof(char) * 2));
+        charstr = char_to_string(state->current_char);
+        strcat(buff, charstr);
+        lex_advance(state);
+        free(charstr);
+        count++;
     }
 
     lex_advance(state);

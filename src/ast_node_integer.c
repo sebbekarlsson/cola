@@ -4,7 +4,7 @@
 
 ast_node_integer* init_ast_node_integer(token* tok) {
     ast_node_integer* ast;
-    ast = malloc(sizeof(ast_node_integer));
+    ast = calloc(1, sizeof(ast_node_integer));
     ast->tok = tok;
     ast->base.type = AST_TYPE_INTEGER;
 
