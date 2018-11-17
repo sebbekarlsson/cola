@@ -5,9 +5,9 @@
 #include "includes/ast_node_char.h"
 #include <stdio.h>
 
-ast_node* print(ast_array* args) {
+ast_node* print(ss_vector* args) {
     for (int i = 0; i < args->size; i++) {
-        ast_node* node = ast_array_get(args, i);
+        ast_node* node = (ast_node*)args->items[i];
 
         if (node->type == AST_TYPE_INTEGER) {
             ast_node_integer* node_integer = (ast_node_integer*) node;
@@ -23,7 +23,7 @@ ast_node* print(ast_array* args) {
 
 void default_scope_initialize(scope* sc) {
 
-    ast_array* args = init_ast_array();
+    ss_vector* args = ss_init_vector(sizeof(ast_node));
 
     ast_node_function_definition* definition = init_ast_node_function_definition(
         init_token(_ID, "print"),

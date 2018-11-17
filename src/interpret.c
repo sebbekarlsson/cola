@@ -68,7 +68,7 @@ ast_node* interpret_visit_empty(ast_node_empty* node) {
 
 ast_node* interpret_visit_compound(ast_node_compound* node) {
     for (int i = 0; i < node->nodes->size; i++) {
-        ast_node* child_node = ast_array_get(node->nodes, i);
+        ast_node* child_node = (ast_node*)node->nodes->items[i];
         interpret_visit(child_node);
     }
 
@@ -179,12 +179,12 @@ ast_node* interpret_visit_function_call(ast_node_function_call* node) {
     }
 
     if (definition) {
-        ast_array* visited_args = init_ast_array();
+        ss_vector* visited_args = ss_init_vector(sizeof(ast_node));
 
         for (int i = 0; i < node->args->size; i++) {
-            ast_array_append(
+            ss_vector_append(
                 visited_args,
-                interpret_visit(ast_array_get(node->args, i))
+                interpret_visit((ast_node*)node->args->items[i])
             );
         }
 

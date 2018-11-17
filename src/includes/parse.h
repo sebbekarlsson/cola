@@ -2,7 +2,6 @@
 #define COLA_PARSE_H
 #include "lex.h"
 #include "ast_node.h"
-#include "token_array.h"
 #include "ast_node_compound.h"
 #include "ast_node_component.h"
 #include "ast_node_variable.h"
@@ -31,6 +30,8 @@ ast_node* parse_factor(parse_state* state);
 ast_node* parse_term(parse_state* state);
 
 ast_node* parse_expr(parse_state* state);
+
+ss_vector* parse_statement_list(parse_state* state);
 
 ast_node* parse_statement(parse_state* state);
 

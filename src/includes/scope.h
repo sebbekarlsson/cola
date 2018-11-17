@@ -1,16 +1,16 @@
 #ifndef COLA_SCOPE_H
 #define COLA_SCOPE_H
 #include "token.h"
-#include "ast_array.h"
+#include "ss_vector.h"
 #include "ast_node_variable_definition.h"
 #include "ast_node_function_definition.h"
 #include "ast_node_component.h"
 
 
 typedef struct SCOPE_STRUCT {
-    ast_array* variables;
-    ast_array* functions;
-    ast_array* components;
+    ss_vector* variables;
+    ss_vector* functions;
+    ss_vector* components;
 } scope;
 
 

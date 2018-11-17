@@ -2,7 +2,7 @@
 #include "includes/ast_node_compound.h"
 
 
-ast_node_compound* init_ast_node_compound(token* tok, ast_array* nodes) {
+ast_node_compound* init_ast_node_compound(token* tok, ss_vector* nodes) {
     ast_node_compound* ast;
     ast = calloc(1, sizeof(ast_node_compound));
     ast->tok = tok;

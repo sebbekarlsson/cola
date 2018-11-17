@@ -6,7 +6,7 @@
 ast_node_function_definition* init_ast_node_function_definition(
     token* tok,
     int data_type,
-    ast_array* args,
+    ss_vector* args,
     ast_node_compound* body
 ) {
     ast_node_function_definition* ast;

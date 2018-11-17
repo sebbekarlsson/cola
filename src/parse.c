@@ -1,6 +1,7 @@
 #include "includes/parse.h"
 #include "includes/token.h"
 #include "includes/error.h"
+#include "includes/ss_vector.h"
 #include "includes/data_type_utils.h"
 #include "includes/ast_node_binop.h"
 #include "includes/ast_node_unaryop.h"
@@ -39,16 +40,16 @@ ast_node_variable* parse_variable(parse_state* state) {
 ast_node_function_call* parse_function_call(parse_state* state) {
     token* tok = state->current_token;
     parse_eat(state, _FUNCTION_CALL);
-    ast_array* args = init_ast_array();
+    ss_vector* args = ss_init_vector(sizeof(ast_node));
 
     parse_eat(state, _LPAREN);
 
     if (state->current_token->type != _RPAREN) {
-        ast_array_append(args, (ast_node*) parse_expr(state));
+        ss_vector_append(args, (ast_node*) parse_expr(state));
 
         while (state->current_token->type == _COMMA) {
             parse_eat(state, _COMMA);
-            ast_array_append(args, (ast_node*) parse_expr(state));
+            ss_vector_append(args, (ast_node*) parse_expr(state));
         }
     }
 
@@ -198,10 +199,10 @@ ast_node* parse_statement(parse_state* state) {
     }
 };
 
-ast_array* parse_statement_list(parse_state* state) {
-    ast_array* nodes = init_ast_array();
+ss_vector* parse_statement_list(parse_state* state) {
+    ss_vector* nodes = ss_init_vector(sizeof(ast_node));
 
-    ast_array_append(nodes, parse_statement(state));
+    ss_vector_append(nodes, parse_statement(state));
 
     while (state->current_token->type == _SEMI) {
         parse_eat(state, _SEMI);
@@ -211,7 +212,7 @@ ast_array* parse_statement_list(parse_state* state) {
         if (!next_statement)
             break;
 
-        ast_array_append(nodes, next_statement);
+        ss_vector_append(nodes, next_statement);
     }
 
     return nodes;
@@ -229,18 +230,18 @@ ast_node_component* parse_component(parse_state* state) {
     token* name = state->current_token;
     parse_eat(state, _ID);
 
-    token_array* deps = init_token_array();
+    ss_vector* deps = ss_init_vector(sizeof(token));
 
     if (state->current_token->type == _USE) {
         parse_eat(state, _USE);
        
         parse_eat(state, _ID); 
-        token_array_append(deps, state->current_token);
+        ss_vector_append(deps, state->current_token);
 
         while (state->current_token->type == _COMMA) {
             parse_eat(state, _COMMA);
             parse_eat(state, _ID); 
-            token_array_append(deps, state->current_token);
+            ss_vector_append(deps, state->current_token);
         }
     }
 
@@ -304,7 +305,7 @@ ast_node_function_definition* parse_function_definition(parse_state* state) {
     char* data_type_name = state->current_token->value;
     int data_type = name_to_data_type(data_type_name);
     ast_node_compound* body;
-    ast_array* args = init_ast_array();
+    ss_vector* args = ss_init_vector(sizeof(ast_node));
 
     parse_eat(state, _DATA_TYPE);
     token* tok = state->current_token;
@@ -313,11 +314,11 @@ ast_node_function_definition* parse_function_definition(parse_state* state) {
     if (state->current_token->type == _LPAREN) {
         parse_eat(state, _LPAREN);
        
-        ast_array_append(args, (ast_node*) parse_variable_definition(state));
+        ss_vector_append(args, (ast_node*) parse_variable_definition(state));
 
         while (state->current_token->type == _COMMA) {
             parse_eat(state, _COMMA);
-            ast_array_append(args, (ast_node*) parse_variable_definition(state));
+            ss_vector_append(args, (ast_node*) parse_variable_definition(state));
         }
     }
 
