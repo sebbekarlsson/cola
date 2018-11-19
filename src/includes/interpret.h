@@ -2,6 +2,9 @@
 #define INTERPRET_INTERPRET_H
 #include "token.h"
 #include "ast_node.h"
+#include "ast_node_if.h"
+#include "ast_node_else.h"
+#include "ast_node_while.h"
 #include "ast_node_char.h"
 #include "ast_node_binop.h"
 #include "ast_node_empty.h"
@@ -25,6 +28,9 @@
 interpret_state* interpret_init();*/
 
 ast_node* interpret_visit(ast_node* node);
+ast_node* interpret_visit_if(ast_node_if* node);
+ast_node* interpret_visit_else(ast_node_else* node);
+ast_node* interpret_visit_while(ast_node_while* node);
 ast_node* interpret_visit_char(ast_node_char* node);
 ast_node* interpret_visit_empty(ast_node_empty* node);
 ast_node* interpret_visit_compound(ast_node_compound* node);

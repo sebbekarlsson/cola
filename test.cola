@@ -1,12 +1,6 @@
-comp main {
-    int x = 1024;
-    int y = 8;
-    char m = 'a';
+int x = 10;
 
-    function void run {
-        print(x / 8);
-        print(m);
-    };
-
-    run();
+while (x) {
+    print(x);
+    x = x - 1;
 };

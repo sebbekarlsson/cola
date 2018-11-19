@@ -19,7 +19,11 @@ typedef struct AST_NODE_STRUCT {
         AST_TYPE_VARIABLE,
         AST_TYPE_FUNCTION_CALL,
         AST_TYPE_VARIABLE_DEFINITION,
-        AST_TYPE_FUNCTION_DEFINITION
+        AST_TYPE_FUNCTION_DEFINITION,
+        AST_TYPE_IF,
+        AST_TYPE_ELSE,
+        AST_TYPE_ASSIGN,
+        AST_TYPE_WHILE
     } type;
     token* tok;
     struct scope* sc;

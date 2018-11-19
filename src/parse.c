@@ -30,6 +30,65 @@ void parse_eat(parse_state* state, int token_type) {
     }
 };
 
+
+ast_node_while* parse_while(parse_state* state) {
+    parse_eat(state, _WHILE);
+    parse_eat(state, _LPAREN);
+    ast_node* expr = parse_expr(state);
+    parse_eat(state, _RPAREN);
+    parse_eat(state, _LBRACE);
+    ast_node_compound* body = parse_compound(state);
+    parse_eat(state, _RBRACE);
+
+    return init_ast_node_while(
+        state->current_token,
+        expr,
+        body
+    );
+}
+
+ast_node_else* parse_else(parse_state* state) {
+    parse_eat(state, _ELSE);
+    ast_node_if* ifnode = (void*)0;
+    ast_node_compound* body = (void*)0;
+
+    if (state->current_token->type == _IF) {
+        ifnode = parse_if(state);
+    } else {
+        parse_eat(state, _LBRACE);
+        body =  parse_compound(state);
+        parse_eat(state, _RBRACE);
+    }
+
+    return init_ast_node_else(
+        state->current_token,
+        body,
+        (struct ast_node_if*) ifnode
+    );
+}
+
+ast_node_if* parse_if(parse_state* state) {
+    parse_eat(state, _IF);
+    parse_eat(state, _LPAREN);
+    ast_node* expr = parse_expr(state);
+    parse_eat(state, _RPAREN);
+    parse_eat(state, _LBRACE);
+    ast_node_compound* body =  parse_compound(state);
+    parse_eat(state, _RBRACE);
+
+    ast_node_else* elsenode = (void*)0;
+
+    if (state->current_token->type == _ELSE)
+        elsenode = parse_else(state);
+
+    return init_ast_node_if(
+        state->current_token,
+        expr,
+        body,
+        elsenode
+    );
+}
+
 ast_node_variable* parse_variable(parse_state* state) {
     ast_node_variable* var = init_ast_node_variable(state->current_token, (void*)0);
     parse_eat(state, _ID);
@@ -186,6 +245,10 @@ ast_node* parse_expr(parse_state* state) {
 ast_node* parse_statement(parse_state* state) {
     if (state->current_token->type == _TYPE_COMPONENT) {
         return (ast_node*) parse_component(state);
+    } else if (state->current_token->type == _IF) {
+        return (ast_node*) parse_if(state);
+    } else if (state->current_token->type == _WHILE) {
+        return (ast_node*) parse_while(state);
     } else if (state->current_token->type == _DATA_TYPE) {
         return (ast_node*) parse_variable_definition(state);
     } else if (state->current_token->type == _TYPE_FUNCTION) {

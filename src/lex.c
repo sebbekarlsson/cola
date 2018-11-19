@@ -273,7 +273,7 @@ char* lex_parse_string(lex_state* state) {
         if (state->current_char == '"')
             break;
 
-        buff = realloc(buff, strlen(buff) + (sizeof(char) * 2));
+        buff = realloc(buff, strlen(buff) + ((sizeof(char) * 2) + 1));
         charstr = char_to_string(state->current_char);
         strcat(buff, charstr);
         lex_advance(state);
@@ -305,7 +305,7 @@ char* lex_parse_char(lex_state* state) {
         if (count >= 1)
             error_in_lexer("Characters can only have one character");
 
-        buff = realloc(buff, strlen(buff) + (sizeof(char) * 2));
+        buff = realloc(buff, strlen(buff) + ((sizeof(char) * 2) + 1));
         charstr = char_to_string(state->current_char);
         strcat(buff, charstr);
         lex_advance(state);

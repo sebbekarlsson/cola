@@ -31,6 +31,15 @@ ast_node* interpret_visit(ast_node* node) {
         case AST_TYPE_CHAR:
             return interpret_visit_char((ast_node_char*)node);
             break;
+        case AST_TYPE_IF:
+            return interpret_visit_if((ast_node_if*)node);
+            break;
+        case AST_TYPE_ELSE:
+            return interpret_visit_else((ast_node_else*)node);
+            break;
+        case AST_TYPE_WHILE:
+            return interpret_visit_while((ast_node_while*)node);
+            break;
         case AST_TYPE_INTEGER:
             return interpret_visit_integer((ast_node_integer*)node);
             break;
@@ -58,6 +67,58 @@ ast_node* interpret_visit(ast_node* node) {
     return node;
 }
 
+ast_node* interpret_visit_if(ast_node_if* node) {
+    int expr_int = 0;
+    ast_node* expr = interpret_visit(node->expr);
+    if (expr->type == AST_TYPE_INTEGER) {
+        ast_node_integer* tmp_ast = (ast_node_integer*) expr;
+        expr_int = atoi(tmp_ast->tok->value);
+        free(tmp_ast);
+    }
+
+    if (expr_int) {
+        return interpret_visit((ast_node*)node->body);
+    } else {
+        return interpret_visit((ast_node*)node->elsenode);
+    }
+
+    return (ast_node*) init_ast_node_empty(node->tok);
+};
+
+ast_node* interpret_visit_else(ast_node_else* node) {
+    if (node->ifnode) {
+        return interpret_visit((ast_node*)node->ifnode);
+    } else {
+        return interpret_visit((ast_node*)node->body);
+    }
+}
+
+
+ast_node* interpret_visit_while(ast_node_while* node) {
+    int expr_int = 0;
+    ast_node_integer* tmp_ast = (void*)0;
+
+    ast_node* expr = interpret_visit((ast_node*) node->expr);
+    if (expr->type == AST_TYPE_INTEGER) {
+        tmp_ast = (ast_node_integer*) expr;
+        expr_int = atoi(tmp_ast->tok->value);
+    }
+
+    while(expr_int) {
+        interpret_visit((ast_node*)node->body);
+
+        expr = interpret_visit((ast_node* )node->expr);
+        if (expr->type == AST_TYPE_INTEGER) {
+            tmp_ast = (ast_node_integer*) expr;
+            expr_int = atoi(tmp_ast->tok->value);
+        }
+    }
+
+    free(tmp_ast);
+
+    return (ast_node*) init_ast_node_empty(node->tok);
+}
+
 ast_node* interpret_visit_char(ast_node_char* node) {
     return (ast_node*) node;
 }
@@ -76,8 +137,30 @@ ast_node* interpret_visit_compound(ast_node_compound* node) {
 }
 
 ast_node* interpret_visit_binop(ast_node_binop* node) {
-    ast_node* left = interpret_visit(node->left);
+    ast_node* left = node->left;
     ast_node* right = interpret_visit(node->right);
+
+    if (node->tok->type == _EQUALS) {
+        if (left->type != AST_TYPE_VARIABLE)
+            error_in_interpreter("Can only use assign on variables");
+
+        ast_node_variable* ast_var = (ast_node_variable*) left;
+
+        ast_node_variable_definition* definition = get_variable_definition(
+            (scope*) ast_node_get_scope((ast_node*)node),
+            ast_var->tok->value
+        );
+
+        if (!definition)
+            error_in_interpreter("Variables must be defined before they can be assigned");
+
+        free(definition->value);
+        definition->value = malloc(sizeof(right));
+        definition->value = right;
+
+    } else {
+        left = interpret_visit(node->left);
+    }
 
     if (left->type == AST_TYPE_INTEGER && right->type == AST_TYPE_INTEGER) {
         ast_node_integer* left_integer = (ast_node_integer*) left;
@@ -133,26 +216,6 @@ ast_node* interpret_visit_variable(ast_node_variable* node) {
     if (definition) {
         ast_node* value = interpret_visit(definition->value);
 
-        // TODO: make this type-checking prettier
-
-        if (definition->data_type == _DATA_TYPE_INTEGER && value->type != AST_TYPE_INTEGER) {
-            char msg[32];
-            sprintf(msg, "wrong data_type for: %s", node->tok->value);
-            error_in_interpreter(msg);
-        }
-
-        if (definition->data_type == _DATA_TYPE_FLOAT && value->type != AST_TYPE_FLOAT) {
-            char msg[32];
-            sprintf(msg, "wrong data_type for: %s", node->tok->value);
-            error_in_interpreter(msg);
-        }
-
-        if (definition->data_type == _DATA_TYPE_VOID && value->type != AST_TYPE_EMPTY) {
-            char msg[32];
-            sprintf(msg, "wrong data_type for: %s", node->tok->value);
-            error_in_interpreter(msg);
-        }
-
         return value;
     } else {
         char msg[32];
@@ -201,6 +264,7 @@ ast_node* interpret_visit_function_call(ast_node_function_call* node) {
 ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node) {
     node->value = interpret_visit(node->value);
 
+    // TODO: add type checking here
     save_variable_definition(
         (scope*)ast_node_get_scope((
                 ast_node*)node

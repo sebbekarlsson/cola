@@ -16,6 +16,12 @@ token* parse_id(lex_state* state, token* token) {
         token->type = _TYPE_COMPONENT;
     } else if (strcmp(token->value, "use") == 0) {
         token->type = _USE;
+    } else if (strcmp(token->value, "if") == 0) {
+        token->type = _IF;
+    } else if (strcmp(token->value, "else") == 0) {
+        token->type = _ELSE;
+    } else if (strcmp(token->value, "while") == 0) {
+        token->type = _WHILE;
     } else if (strcmp(token->value, "function") == 0) {
         token->type = _TYPE_FUNCTION;
     } else if (lex_peek_next(state, state->pos) == '(') {

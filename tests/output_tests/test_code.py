@@ -19,3 +19,15 @@ def test_component_cola():
 
 def test_no_executions_outside_main_cola():
     assert binexec('no_executions_outside_main.cola') is None
+
+
+def test_if_cola():
+    assert binexec('if.cola') == '100'
+
+
+def test_if_else_cola():
+    assert binexec('if_else.cola') == '200\n256'
+
+
+def test_if_assign_cola():
+    assert binexec('assign.cola') == '2\n4'
