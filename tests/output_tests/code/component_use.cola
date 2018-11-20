@@ -1,0 +1,11 @@
+comp library {
+    function void print_a_number {
+        print(100);    
+    };
+};
+
+comp main use library {
+    function void run {
+        print_a_number(); 
+    };    
+};

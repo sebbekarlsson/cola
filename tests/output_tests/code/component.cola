@@ -6,6 +6,4 @@ comp main {
         int value = x * y;
         print(value);    
     };
-
-    run();
 };

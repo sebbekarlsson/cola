@@ -345,6 +345,7 @@ ast_node_component* parse_component(parse_state* state, scope* sc) {
 
     parse_eat(state, _LBRACE);
     ast_node_compound* body = parse_compound(state, sc);
+    ast_node_set_scope((ast_node*)body, (struct scope*)sc);
 
     parse_eat(state, _RBRACE);
 
@@ -355,7 +356,7 @@ ast_node_component* parse_component(parse_state* state, scope* sc) {
         deps
     );
     
-    ast_node_set_scope((ast_node*)component, (struct scope*)sc);
+    //ast_node_set_scope((ast_node*)component, (struct scope*)sc);
 
     return component;
 };

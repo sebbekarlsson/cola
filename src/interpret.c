@@ -198,16 +198,48 @@ ast_node* interpret_visit_integer(ast_node_integer* node) {
 }
 
 ast_node* interpret_visit_component(ast_node_component* node) {
+    save_component((scope*)ast_node_get_scope((ast_node*)node), node);
+    
     if (node->deps->size == 0) {
         free(node->deps);
     } else {
         for (int i = 0; i < node->deps->size; i++) {
-            ast_node_component* component = get_component(node->sc, node->deps->items[i]->value);
+            ast_node_component* component = get_component(
+                (scope*)ast_node_get_scope((ast_node*)node),
+                ((token*)node->deps->items[i])->value
+            );
+
+            if (!component) {
+                char msg[32];
+                sprintf(msg, "could not find definition for: %s", ((token*)node->deps->items[i])->value);
+                error_in_interpreter(msg);
+            }
+
+            interpret_visit((ast_node*)component->body);
+            scope* tmp_scope = (scope*)ast_node_get_scope((ast_node*) component->body);
+
+            for (int ii = 0; ii < tmp_scope->functions->size; ii++) {
+                save_function_definition(
+                    (scope*)ast_node_get_scope((ast_node*)node->body),
+                    (ast_node_function_definition*)tmp_scope->functions->items[ii]
+                );   
+            }
         }
     }
 
+    // check if main component
     if (strcmp(node->name->value, "main") == 0)
         interpret_visit((ast_node*)node->body);
+
+
+    // look for run method
+    ast_node_function_definition* run_definition = get_function_definition(
+        (scope*)ast_node_get_scope((ast_node*)node->body),
+        "run"
+    );
+
+    if (run_definition)
+        interpret_visit((ast_node*)run_definition->body);
 
     return (ast_node*) node;
 }
