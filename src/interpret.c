@@ -46,6 +46,9 @@ ast_node* interpret_visit(ast_node* node) {
         case AST_TYPE_INTEGER:
             return interpret_visit_integer((ast_node_integer*)node);
             break;
+        case AST_TYPE_FLOAT:
+            return interpret_visit_float((ast_node_float*)node);
+            break;
         case AST_TYPE_COMPONENT:
             return interpret_visit_component((ast_node_component*)node);
             break;
@@ -206,6 +209,10 @@ ast_node* interpret_visit_number(ast_node_number* node) {
 }
 
 ast_node* interpret_visit_integer(ast_node_integer* node) {
+    return (ast_node*) node;
+}
+
+ast_node* interpret_visit_float(ast_node_float* node) {
     return (ast_node*) node;
 }
 

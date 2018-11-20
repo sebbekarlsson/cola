@@ -6,7 +6,7 @@
 #include "includes/ast_node_binop.h"
 #include "includes/ast_node_unaryop.h"
 #include "includes/ast_node_number.h"
-#include "includes/ast_node_integer.h"
+#include "includes/ast_node_float.h"
 #include "includes/ast_node_empty.h"
 #include "includes/ast_node_char.h"
 #include <stdlib.h>
@@ -186,7 +186,7 @@ ast_node* parse_factor(parse_state* state, scope* sc) {
 
     } else if (tok->type == _FLOAT) {
         parse_eat(state, _FLOAT);
-        ast_node_integer* node = init_ast_node_integer(tok);
+        ast_node_float* node = init_ast_node_float(tok);
         ast_node_set_scope((ast_node*) node, (struct scope*) sc);
         // invalid pointer type
         return (ast_node*) node;
