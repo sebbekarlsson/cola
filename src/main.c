@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     lex_state* lex_state = lex_init(file_contents);
     parse_state* parse_state = parse_init(lex_state);
 
-    ast_node* tree = (ast_node*) parse_parse(parse_state);
+    ast_node* tree = (ast_node*) parse_parse(parse_state, (void*)0);
     interpret_visit(tree);
 
     free(tree);

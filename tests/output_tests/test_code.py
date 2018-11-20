@@ -31,3 +31,7 @@ def test_if_else_cola():
 
 def test_if_assign_cola():
     assert binexec('assign.cola') == '2\n4'
+
+
+def test_while_cola():
+    assert binexec('while.cola') == '3\n2\n1'

@@ -1,0 +1,14 @@
+comp main {
+    int x;
+
+    function void init {
+        x = 100;
+    };
+
+    function void run {
+        while (x) { print(x); x = x -1; };
+    };
+
+    init();
+    run();
+};

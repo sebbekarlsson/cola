@@ -1,6 +1,0 @@
-int x = 10;
-
-while (x) {
-    print(x);
-    x = x - 1;
-};

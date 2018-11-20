@@ -139,6 +139,7 @@ ast_node* interpret_visit_compound(ast_node_compound* node) {
 ast_node* interpret_visit_binop(ast_node_binop* node) {
     ast_node* left = node->left;
     ast_node* right = interpret_visit(node->right);
+    ast_node_variable_definition* definition;
 
     if (node->tok->type == _EQUALS) {
         if (left->type != AST_TYPE_VARIABLE)
@@ -146,7 +147,7 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
 
         ast_node_variable* ast_var = (ast_node_variable*) left;
 
-        ast_node_variable_definition* definition = get_variable_definition(
+        definition = get_variable_definition(
             (scope*) ast_node_get_scope((ast_node*)node),
             ast_var->tok->value
         );
@@ -156,8 +157,8 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
 
         free(definition->value);
         definition->value = malloc(sizeof(right));
-        definition->value = right;
-
+        definition->value = interpret_visit(right);
+        return definition->value;
     } else {
         left = interpret_visit(node->left);
     }
@@ -197,8 +198,13 @@ ast_node* interpret_visit_integer(ast_node_integer* node) {
 }
 
 ast_node* interpret_visit_component(ast_node_component* node) {
-    if (node->deps->size == 0)
+    if (node->deps->size == 0) {
         free(node->deps);
+    } else {
+        for (int i = 0; i < node->deps->size; i++) {
+            ast_node_component* component = get_component(node->sc, node->deps->items[i]->value);
+        }
+    }
 
     if (strcmp(node->name->value, "main") == 0)
         interpret_visit((ast_node*)node->body);

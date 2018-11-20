@@ -1,0 +1,13 @@
+comp hello {
+    function void print_number {
+        print(16);
+    };
+};
+
+comp main use hello {
+    function void run {
+        print_number();
+    };
+    
+    run();
+};

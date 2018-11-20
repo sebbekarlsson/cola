@@ -33,6 +33,7 @@ typedef enum {
     _FUNCTION_CALL = 29,
     _NUMBER = 30,
     _WHILE = 31,
+    _EQUALS_EQUALS,
     _EMPTY,
     _CHAR,
     _DATA_TYPE_CHAR,

@@ -32,4 +32,5 @@ typedef struct AST_NODE_STRUCT {
 
 ast_node* init_ast_node(token* tok);
 struct scope* ast_node_get_scope(ast_node* node);
+void ast_node_set_scope(ast_node* node, struct scope* sc);
 #endif

@@ -16,3 +16,7 @@ ast_node* init_ast_node(token* tok) {
 struct scope* ast_node_get_scope(ast_node* node) {
     return (node->sc ? node->sc : (struct scope*) global_scope);
 }
+
+void ast_node_set_scope(ast_node* node, struct scope* sc) {
+    node->sc = sc;
+}
