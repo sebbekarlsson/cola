@@ -43,10 +43,8 @@
         };
     };
 
-    comp othercomponent use mycomponent {
-        function void run {
-            run mycomponent;  // will execute `run` method in `mycomponent`
-        };
+    comp main use mycomponent {
+        // run method of `mycomponent` is executed when mounted like this
     };
 
 ### The yields-method
