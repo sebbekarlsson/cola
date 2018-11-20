@@ -16,6 +16,9 @@ ast_node* interpret_visit(ast_node* node) {
     }
     
     switch (node->type) {
+        case AST_TYPE_RETURN:
+            return interpret_visit_return((ast_node_return*)node);
+            break;
         case AST_TYPE_COMPOUND:
             return interpret_visit_compound((ast_node_compound*)node);
             break;
@@ -66,6 +69,10 @@ ast_node* interpret_visit(ast_node* node) {
 
     return node;
 }
+
+ast_node* interpret_visit_return(ast_node_return* node) {
+    return interpret_visit(node->value);
+};
 
 ast_node* interpret_visit_if(ast_node_if* node) {
     int expr_int = 0;
@@ -130,7 +137,12 @@ ast_node* interpret_visit_empty(ast_node_empty* node) {
 ast_node* interpret_visit_compound(ast_node_compound* node) {
     for (int i = 0; i < node->nodes->size; i++) {
         ast_node* child_node = (ast_node*)node->nodes->items[i];
-        interpret_visit(child_node);
+
+        if (child_node->type == AST_TYPE_RETURN) {
+           return interpret_visit(child_node);
+        } else { 
+            interpret_visit(child_node);
+        }
     }
 
     return (ast_node*) node;

@@ -31,6 +31,20 @@ void parse_eat(parse_state* state, int token_type) {
 };
 
 
+ast_node_return* parse_return(parse_state* state, scope* sc) {
+    parse_eat(state, _RETURN);
+    ast_node* expr = parse_expr(state, sc);
+
+    ast_node_return* return_ast = init_ast_node_return(
+        state->current_token,
+        expr
+    );
+
+    ast_node_set_scope((ast_node*) return_ast, (struct scope*) sc);
+
+    return return_ast;
+}
+
 ast_node_while* parse_while(parse_state* state, scope* sc) {
     parse_eat(state, _WHILE);
     parse_eat(state, _LPAREN);
@@ -277,7 +291,9 @@ ast_node* parse_expr(parse_state* state, scope* sc) {
 }
 
 ast_node* parse_statement(parse_state* state, scope* sc) {
-    if (state->current_token->type == _TYPE_COMPONENT) {
+    if (state->current_token->type == _RETURN) {
+        return (ast_node*) parse_return(state, sc);
+    } else if (state->current_token->type == _TYPE_COMPONENT) {
         return (ast_node*) parse_component(state, sc);
     } else if (state->current_token->type == _IF) {
         return (ast_node*) parse_if(state, sc);

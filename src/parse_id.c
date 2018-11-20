@@ -24,6 +24,8 @@ token* parse_id(lex_state* state, token* token) {
         token->type = _WHILE;
     } else if (strcmp(token->value, "function") == 0) {
         token->type = _TYPE_FUNCTION;
+    } else if (strcmp(token->value, "return") == 0) {
+        token->type = _RETURN;
     } else if (lex_peek_next(state, state->pos) == '(') {
         token->type = _FUNCTION_CALL;
     }

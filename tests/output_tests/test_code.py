@@ -39,3 +39,7 @@ def test_if_assign_cola():
 
 def test_while_cola():
     assert binexec('while.cola') == '3\n2\n1'
+
+
+def test_return_cola():
+    assert binexec('return.cola') == '256'

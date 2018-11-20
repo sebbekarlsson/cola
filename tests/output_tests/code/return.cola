@@ -1,0 +1,6 @@
+function int get_integer {
+    return 256;
+    return 128;    
+};
+
+print(get_integer());
