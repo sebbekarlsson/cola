@@ -20,7 +20,7 @@ char lex_peek_next(lex_state* state, int start);
 
 char* lex_parse_id(lex_state* state);
 
-char* lex_parse_number(lex_state* state);
+token* lex_parse_number(lex_state* state);
 
 char* lex_parse_string(lex_state* state);
 

@@ -236,6 +236,35 @@ ast_node* interpret_visit_component(ast_node_component* node) {
                     (ast_node_function_definition*)tmp_scope->functions->items[ii]
                 );   
             }
+
+            // look for yields function
+            ast_node_function_definition* yields_definition = get_function_definition(
+                tmp_scope,
+                "yields"
+            );
+
+            if (yields_definition) {
+                // lets create a variable definition in the currently visited
+                // component and assign whatever the yields method returns
+                // to it.
+                ast_node_variable_definition* var_definition = init_ast_node_variable_definition(
+                    (token*)node->deps->items[i],
+                    yields_definition->data_type,
+                    interpret_visit((ast_node*)yields_definition->body)
+                );
+                ast_node_set_scope(
+                    (ast_node*) var_definition,
+                    (struct scope*)tmp_scope // should use same scope as the-
+                    // - component it came from
+                );
+
+                // save whatever the yields method returns as a variable
+                // in the currently visited component.
+                save_variable_definition(
+                    (scope*)ast_node_get_scope((ast_node*)node->body),
+                    var_definition 
+                );
+            }
         }
     }
 

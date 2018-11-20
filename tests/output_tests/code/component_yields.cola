@@ -1,0 +1,15 @@
+comp PI {
+    function float get_PI_value {
+        return 3.14;    
+    };
+
+    function float yields {
+        return get_PI_value();    
+    };    
+};
+
+comp main use PI {
+    function void run {
+        print(PI);    
+    };    
+};

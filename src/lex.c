@@ -131,7 +131,7 @@ token* lex_get_next_token(lex_state* state) {
 
         else if (isdigit(state->current_char)) {
             free(str);
-            return init_token(_NUMBER, lex_parse_number(state));
+            return lex_parse_number(state);
         }
 
         else if (isalnum(state->current_char)) {
@@ -211,10 +211,13 @@ char* lex_parse_id(lex_state* state) {
  * numerical
  *
  * @param lex_state* state
+ *
+ * @return token*
  */
-char* lex_parse_number(lex_state* state) {
+token* lex_parse_number(lex_state* state) {
     char* buff;
     char* charstr;
+    int type = _NUMBER;
 
     buff = calloc(2, sizeof(char*));
     charstr = char_to_string(state->current_char);
@@ -245,9 +248,11 @@ char* lex_parse_number(lex_state* state) {
         }
 
         free(charstr);
+
+        type = _FLOAT;
     }
 
-    return buff;
+    return init_token(type, buff);
 }
 
 /**

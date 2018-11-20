@@ -36,6 +36,7 @@ typedef enum {
     _EQUALS_EQUALS,
     _EMPTY,
     _CHAR,
+    _FLOAT,
     _DATA_TYPE_CHAR,
     _DATA_TYPE_INTEGER,
     _DATA_TYPE_FLOAT,

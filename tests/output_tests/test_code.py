@@ -21,6 +21,10 @@ def test_component_use_cola():
     assert binexec('component_use.cola') == '100'
 
 
+def test_component_yields_cola():
+    assert binexec('component_yields.cola') == '3.14'
+
+
 def test_no_executions_outside_main_cola():
     assert binexec('no_executions_outside_main.cola') is None
 
