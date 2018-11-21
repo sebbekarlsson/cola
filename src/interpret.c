@@ -124,7 +124,8 @@ ast_node* interpret_visit_while(ast_node_while* node) {
         }
     }
 
-    free(tmp_ast);
+    // causes undefined behaviour
+    //free(tmp_ast);
 
     return (ast_node*) init_ast_node_empty(node->tok);
 }
@@ -170,13 +171,13 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
         if (!definition)
             error_in_interpreter("Variables must be defined before they can be assigned");
 
-        free(definition->value);
-        definition->value = malloc(sizeof(right));
+        // this causes undefined behaviour
+        //free(definition->value);
+        //definition->value = malloc(sizeof(right));
         definition->value = interpret_visit(right);
-        return definition->value;
-    } else {
-        left = interpret_visit(node->left);
     }
+
+    left = interpret_visit(node->left);
 
     if (left->type == AST_TYPE_INTEGER && right->type == AST_TYPE_INTEGER) {
         ast_node_integer* left_integer = (ast_node_integer*) left;
@@ -195,7 +196,6 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
             sprintf(node->value, "%d", atoi(left_integer->tok->value) * atoi(right_integer->tok->value));
             return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
         }
-
     }
 
     return (ast_node*) node;

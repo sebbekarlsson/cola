@@ -52,7 +52,10 @@ ast_node_while* parse_while(parse_state* state, scope* sc) {
     ast_node* expr = parse_expr(state, sc);
     parse_eat(state, _RPAREN);
     parse_eat(state, _LBRACE);
+
     ast_node_compound* body = parse_compound(state, sc);
+    ast_node_set_scope((ast_node*) body, (struct scope*) sc);
+
     parse_eat(state, _RBRACE);
 
     ast_node_while* while_ast = init_ast_node_while(

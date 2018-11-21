@@ -19,6 +19,8 @@ ast_node* print(ss_vector* args) {
         } else if (node->type == AST_TYPE_CHAR) {
             ast_node_char* node_char = (ast_node_char*) node;
             printf("%s\n", node_char->tok->value);
+        } else {
+            printf("<%d>\n", (int)node->type);
         }
     }
 
