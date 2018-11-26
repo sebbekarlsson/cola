@@ -12,13 +12,13 @@ ast_node* print(ss_vector* args) {
 
         if (node->type == AST_TYPE_INTEGER) {
             ast_node_integer* node_integer = (ast_node_integer*) node;
-            printf("%s\n", node_integer->tok->value);
+            printf("%d\n", node_integer->value);
         } else if (node->type == AST_TYPE_FLOAT) {
             ast_node_float* node_float = (ast_node_float*) node;
-            printf("%s\n", node_float->tok->value);
+            printf("%f\n", node_float->value);
         } else if (node->type == AST_TYPE_CHAR) {
             ast_node_char* node_char = (ast_node_char*) node;
-            printf("%s\n", node_char->tok->value);
+            printf("%c\n", node_char->value);
         } else {
             printf("<%d>\n", (int)node->type);
         }

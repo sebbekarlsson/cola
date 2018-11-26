@@ -82,7 +82,7 @@ ast_node* interpret_visit_if(ast_node_if* node) {
     ast_node* expr = interpret_visit(node->expr);
     if (expr->type == AST_TYPE_INTEGER) {
         ast_node_integer* tmp_ast = (ast_node_integer*) expr;
-        expr_int = atoi(tmp_ast->tok->value);
+        expr_int = tmp_ast->value;
         free(tmp_ast);
     }
 
@@ -111,7 +111,7 @@ ast_node* interpret_visit_while(ast_node_while* node) {
     ast_node* expr = interpret_visit((ast_node*) node->expr);
     if (expr->type == AST_TYPE_INTEGER) {
         tmp_ast = (ast_node_integer*) expr;
-        expr_int = atoi(tmp_ast->tok->value);
+        expr_int = tmp_ast->value;
     }
 
     while(expr_int) {
@@ -120,7 +120,7 @@ ast_node* interpret_visit_while(ast_node_while* node) {
         expr = interpret_visit((ast_node* )node->expr);
         if (expr->type == AST_TYPE_INTEGER) {
             tmp_ast = (ast_node_integer*) expr;
-            expr_int = atoi(tmp_ast->tok->value);
+            expr_int = tmp_ast->value;
         }
     }
 
@@ -180,21 +180,56 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
     left = interpret_visit(node->left);
 
     if (left->type == AST_TYPE_INTEGER && right->type == AST_TYPE_INTEGER) {
-        ast_node_integer* left_integer = (ast_node_integer*) left;
-        ast_node_integer* right_integer = (ast_node_integer*) right;
+        int left_integer = ((ast_node_integer*) left)->value;
+        int right_integer = ((ast_node_integer*) right)->value;
         
         if (node->tok->type == _OP_PLUS) {
-            sprintf(node->value, "%d", atoi(left_integer->tok->value) + atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer + right_integer);
         } else if (node->tok->type == _OP_SUBTRACT) {
-            sprintf(node->value, "%d", atoi(left_integer->tok->value) - atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer - right_integer);
         } else if (node->tok->type == _OP_DIVIDE) {
-            sprintf(node->value, "%d", atoi(left_integer->tok->value) / atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer / right_integer);
         } else if (node->tok->type == _OP_MULTIPLY) {
-            sprintf(node->value, "%d", atoi(left_integer->tok->value) * atoi(right_integer->tok->value));
-            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value));
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer * right_integer);
+        }
+    } else if (left->type == AST_TYPE_FLOAT && right->type == AST_TYPE_FLOAT) {
+        float left_float = ((ast_node_float*) left)->value;
+        float right_float = ((ast_node_float*) right)->value;
+        
+        if (node->tok->type == _OP_PLUS) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float + right_float);
+        } else if (node->tok->type == _OP_SUBTRACT) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float - right_float);
+        } else if (node->tok->type == _OP_DIVIDE) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float / right_float);
+        } else if (node->tok->type == _OP_MULTIPLY) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float * right_float);
+        }
+    } else if (left->type == AST_TYPE_INTEGER && right->type == AST_TYPE_FLOAT) {
+        int left_integer = ((ast_node_integer*) left)->value;
+        float right_float = ((ast_node_float*) right)->value;
+        
+        if (node->tok->type == _OP_PLUS) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_integer + right_float);
+        } else if (node->tok->type == _OP_SUBTRACT) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_integer - right_float);
+        } else if (node->tok->type == _OP_DIVIDE) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_integer / right_float);
+        } else if (node->tok->type == _OP_MULTIPLY) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_integer * right_float);
+        }
+    } else if (left->type == AST_TYPE_FLOAT && right->type == AST_TYPE_INTEGER) {
+        float left_float = ((ast_node_float*) left)->value;
+        int right_integer = ((ast_node_integer*) right)->value;
+        
+        if (node->tok->type == _OP_PLUS) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float + right_integer);
+        } else if (node->tok->type == _OP_SUBTRACT) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float - right_integer);
+        } else if (node->tok->type == _OP_DIVIDE) {
+            return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float / right_integer);
+        } else if (node->tok->type == _OP_MULTIPLY) {
+            return (ast_node*) init_ast_node_integer(init_token(_FLOAT, node->value), left_float * right_integer);
         }
     }
 
@@ -203,7 +238,7 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
 
 ast_node* interpret_visit_number(ast_node_number* node) {
    if (is_integer(node->tok->value))
-       return interpret_visit((ast_node*) init_ast_node_integer(node->tok));
+       return interpret_visit((ast_node*) init_ast_node_integer(node->tok, atoi(node->tok->value)));
 
    return (ast_node*) node;
 }

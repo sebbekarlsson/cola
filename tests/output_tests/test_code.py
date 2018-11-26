@@ -13,6 +13,10 @@ def test_binop_cola():
     assert binexec('binop.cola') == '1000\n110\n10\n90\n95'
 
 
+def test_floats_cola():
+    assert binexec('floats.cola') == '5.000000'
+
+
 def test_component_cola():
     assert binexec('component.cola') == '100'
 
@@ -22,7 +26,7 @@ def test_component_use_cola():
 
 
 def test_component_yields_cola():
-    assert binexec('component_yields.cola') == '3.14'
+    assert binexec('component_yields.cola') == '3.140000'
 
 
 def test_no_executions_outside_main_cola():

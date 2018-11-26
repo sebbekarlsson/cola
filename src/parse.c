@@ -189,14 +189,14 @@ ast_node* parse_factor(parse_state* state, scope* sc) {
 
     } else if (tok->type == _FLOAT) {
         parse_eat(state, _FLOAT);
-        ast_node_float* node = init_ast_node_float(tok);
+        ast_node_float* node = init_ast_node_float(tok, atof(tok->value));
         ast_node_set_scope((ast_node*) node, (struct scope*) sc);
         // invalid pointer type
         return (ast_node*) node;
     
     } else if (tok->type == _CHAR) {
         parse_eat(state, _CHAR);
-        ast_node_char* node = init_ast_node_char(tok);
+        ast_node_char* node = init_ast_node_char(tok, tok->value[0]);
         ast_node_set_scope((ast_node*) node, (struct scope*) sc);
         // invalid pointer type
         return (ast_node*) node;
@@ -406,7 +406,7 @@ ast_node_variable_definition* parse_variable_definition(parse_state* state, scop
             if (data_type == _DATA_TYPE_INTEGER && (value->type != AST_TYPE_INTEGER && value->type != AST_TYPE_NUMBER)) {
                 error_in_parser("can only assign numbers to _DATA_TYPE_INTEGER");
             }
-            if (data_type == _DATA_TYPE_FLOAT && value->type != (value->type != AST_TYPE_FLOAT && value->type != AST_TYPE_NUMBER)) {
+            if (data_type == _DATA_TYPE_FLOAT && (value->type != AST_TYPE_FLOAT && value->type != AST_TYPE_NUMBER)) {
                 error_in_parser("can only assign numbers to _DATA_TYPE_FLOAT");
             }
             if (data_type == _DATA_TYPE_STRING && value->type != AST_TYPE_STRING) {
