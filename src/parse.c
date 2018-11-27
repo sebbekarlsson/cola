@@ -38,6 +38,23 @@ ast_node_integer* parse_integer(parse_state* state, scope* sc) {
     return node;
 }
 
+ast_node_vecptr* parse_vecptr(parse_state* state, scope* sc) {
+    ast_node* target = parse_expr(state, sc);
+    parse_eat(state, _LBRACKET);
+    ast_node* index = (ast_node*) parse_expr(state, sc);
+    parse_eat(state, _RBRACKET);
+
+    ast_node_vecptr* vecptr_node = init_ast_node_vecptr(
+        (void*)0,
+        target,
+        index
+    );
+
+    ast_node_set_scope((ast_node*)vecptr_node, (struct scope*) sc);
+
+    return vecptr_node;
+}
+
 ast_node_float* parse_float(parse_state* state, scope* sc) {
     ast_node_float* node = init_ast_node_float(state->current_token, atof(state->current_token->value));
     parse_eat(state, _FLOAT);
@@ -242,7 +259,7 @@ ast_node* parse_term(parse_state* state, scope* sc) {
         ast_node* assign_node = (ast_node*)  init_ast_node_binop(tok, node, parse_expr(state, sc));
         ast_node_set_scope((ast_node*) assign_node, (struct scope*) sc);
         return assign_node;
-    }
+    } 
 
     while (
             state->current_token->type == _OP_MULTIPLY ||
@@ -269,6 +286,14 @@ ast_node* parse_expr(parse_state* state, scope* sc) {
 
     // invalid pointer type
     ast_node* node = parse_term(state, sc);
+
+    if (state->current_token->type == _LBRACKET) {
+        tok = state->current_token;
+        parse_eat(state, _LBRACKET);
+        ast_node_vecptr* vecptrnode = init_ast_node_vecptr((void*)0, node, parse_expr(state, sc));
+        parse_eat(state, _RBRACKET);
+        return (ast_node*) vecptrnode;
+    }
 
     while(
             state->current_token->type == _OP_PLUS ||

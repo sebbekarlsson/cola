@@ -63,3 +63,7 @@ def test_while_cola():
 
 def test_return_cola():
     assert binexec('return.cola') == '256'
+
+
+def test_vecptr_cola():
+    assert binexec('vecptr.cola') == 'h\ne\nl\nl\no'

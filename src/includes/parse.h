@@ -13,6 +13,7 @@
 #include "ast_node_variable.h"
 #include "ast_node_integer.h"
 #include "ast_node_float.h"
+#include "ast_node_vecptr.h"
 #include "ast_node_function_call.h"
 #include "ast_node_variable_definition.h"
 #include "ast_node_function_definition.h"
@@ -32,6 +33,8 @@ void parse_eat(parse_state* state, int token_type);
 ast_node_integer* parse_integer(parse_state* state, scope* sc);
 
 ast_node_float* parse_float(parse_state* state, scope* sc);
+
+ast_node_vecptr* parse_vecptr(parse_state* state, scope* sc);
 
 ast_node_return* parse_return(parse_state* state, scope* sc);
 

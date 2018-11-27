@@ -116,7 +116,23 @@ token* lex_get_next_token(lex_state* state) {
 
         else if (state->current_char == '=') {
             lex_advance(state);
-            return init_token(_EQUALS, str);
+            if (state->current_char == '=') {
+                lex_advance(state);
+                return init_token(_EQUALS_EQUALS, str);
+            } else {
+                lex_advance(state);
+                return init_token(_EQUALS, str);
+            }
+        }
+
+        else if (state->current_char == '[') {
+            lex_advance(state);
+            return init_token(_LBRACKET, str);
+        }
+
+        else if (state->current_char == ']') {
+            lex_advance(state);
+            return init_token(_RBRACKET, str);
         }
 
         else if (state->current_char == '"') {

@@ -1,0 +1,7 @@
+string str = "hello";
+int i = 0;
+
+while(i < strlen(str)) {
+    print(str[i]);
+    i = i + 1;
+};

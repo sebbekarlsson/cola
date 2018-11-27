@@ -52,6 +52,9 @@ ast_node* interpret_visit(ast_node* node) {
         case AST_TYPE_COMPONENT:
             return interpret_visit_component((ast_node_component*)node);
             break;
+        case AST_TYPE_VECPTR:
+            return interpret_visit_vecptr((ast_node_vecptr*)node);
+            break;
         case AST_TYPE_VARIABLE:
             return interpret_visit_variable((ast_node_variable*)node);
             break;
@@ -203,6 +206,14 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
             return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer / right_integer);
         } else if (node->tok->type == _OP_MULTIPLY) {
             return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer * right_integer);
+        } else if (node->tok->type == _EQUALS_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer == right_integer);
+        } else if (node->tok->type == _NOT_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer != right_integer);
+        } else if (node->tok->type == _LESS_THAN) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer < right_integer);
+        } else if (node->tok->type == _LARGER_THAN) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer > right_integer);
         }
     } else if (left->type == AST_TYPE_FLOAT && right->type == AST_TYPE_FLOAT) {
         float left_float = ((ast_node_float*) left)->value;
@@ -216,6 +227,14 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
             return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float / right_float);
         } else if (node->tok->type == _OP_MULTIPLY) {
             return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float * right_float);
+        } else if (node->tok->type == _EQUALS_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_float == right_float);
+        } else if (node->tok->type == _NOT_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_float != right_float);
+        } else if (node->tok->type == _LESS_THAN) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_float < right_float);
+        } else if (node->tok->type == _LARGER_THAN) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_float > right_float);
         }
     } else if (left->type == AST_TYPE_INTEGER && right->type == AST_TYPE_FLOAT) {
         int left_integer = ((ast_node_integer*) left)->value;
@@ -229,6 +248,14 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
             return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_integer / right_float);
         } else if (node->tok->type == _OP_MULTIPLY) {
             return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_integer * right_float);
+        } else if (node->tok->type == _EQUALS_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer == right_float);
+        } else if (node->tok->type == _NOT_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer != right_float);
+        } else if (node->tok->type == _LESS_THAN) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer < right_float);
+        } else if (node->tok->type == _LARGER_THAN) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_integer > right_float);
         }
     } else if (left->type == AST_TYPE_FLOAT && right->type == AST_TYPE_INTEGER) {
         float left_float = ((ast_node_float*) left)->value;
@@ -242,15 +269,27 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
             return (ast_node*) init_ast_node_float(init_token(_FLOAT, node->value), left_float / right_integer);
         } else if (node->tok->type == _OP_MULTIPLY) {
             return (ast_node*) init_ast_node_integer(init_token(_FLOAT, node->value), left_float * right_integer);
+        } else if (node->tok->type == _EQUALS_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_float == right_integer);
+        } else if (node->tok->type == _NOT_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_float != right_integer);
+        } else if (node->tok->type == _LESS_THAN) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_float < right_integer);
+        } else if (node->tok->type == _LARGER_THAN) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), left_float > right_integer);
         }
     } else if (left->type == AST_TYPE_STRING && right->type == AST_TYPE_STRING) {
         char* left_string = ((ast_node_string*) left)->value;
         char* right_string = ((ast_node_string*) right)->value;
 
-        strcat(left_string, right_string);
         
         if (node->tok->type == _OP_PLUS) {
+            strcat(left_string, right_string);
             return (ast_node*) init_ast_node_string(init_token(_STRING, node->value), left_string);
+        } else if (node->tok->type == _EQUALS_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), strcmp(left_string, right_string) == 0);
+        } else if (node->tok->type == _NOT_EQUALS) {
+            return (ast_node*) init_ast_node_integer(init_token(_INTEGER, node->value), strcmp(left_string, right_string) != 0);
         }
     } else {
         error_in_interpreter("Invalid binop"); 
@@ -347,12 +386,38 @@ ast_node* interpret_visit_component(ast_node_component* node) {
     return (ast_node*) node;
 }
 
+ast_node* interpret_visit_vecptr(ast_node_vecptr* node) {
+    ast_node* target = interpret_visit(node->target);
+    ast_node* index = interpret_visit(node->index);
+
+    if (target->type == AST_TYPE_STRING) {
+        ast_node_string* target_string = (ast_node_string*) target;
+        if (index->type == AST_TYPE_INTEGER) {
+            ast_node_integer* index_integer = (ast_node_integer*) index;
+            char value = target_string->value[index_integer->value];
+            char* strval = char_to_string(value);
+            return (ast_node*) init_ast_node_char(init_token(_CHAR, strval), value);
+        }
+    }
+
+    return (ast_node*) interpret_visit(node->target);
+}
+
 ast_node* interpret_visit_variable(ast_node_variable* node) {
 
     ast_node_variable_definition* definition = get_variable_definition(
         (scope*) ast_node_get_scope((ast_node*)node),
         node->tok->value
     );
+
+    if (!definition) {
+        // definition not found in the nodes scope, so let's look for it
+        // in the global scope.
+        definition = get_variable_definition(
+            global_scope,
+            node->tok->value
+        );
+    }
 
     if (definition) {
         ast_node* value = interpret_visit(definition->value);
