@@ -17,6 +17,18 @@ def test_floats_cola():
     assert binexec('floats.cola') == '5.000000'
 
 
+def test_string_cola():
+    assert binexec('string.cola') == 'hello world'
+
+
+def test_strlen_cola():
+    assert binexec('strlen.cola') == '5'
+
+
+def string_plus_string_cola():
+    assert binexec('string_plus_string.cola') == 'hello world!!!'
+
+
 def test_component_cola():
     assert binexec('component.cola') == '100'
 

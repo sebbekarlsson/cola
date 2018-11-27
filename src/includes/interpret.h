@@ -9,9 +9,9 @@
 #include "ast_node_char.h"
 #include "ast_node_binop.h"
 #include "ast_node_empty.h"
-#include "ast_node_number.h"
 #include "ast_node_integer.h"
 #include "ast_node_float.h"
+#include "ast_node_string.h"
 #include "ast_node_compound.h"
 #include "ast_node_variable.h"
 #include "ast_node_component.h"
@@ -38,9 +38,9 @@ ast_node* interpret_visit_char(ast_node_char* node);
 ast_node* interpret_visit_empty(ast_node_empty* node);
 ast_node* interpret_visit_compound(ast_node_compound* node);
 ast_node* interpret_visit_binop(ast_node_binop* node);
-ast_node* interpret_visit_number(ast_node_number* node);
 ast_node* interpret_visit_integer(ast_node_integer* node);
 ast_node* interpret_visit_float(ast_node_float* node);
+ast_node* interpret_visit_string(ast_node_string* node);
 ast_node* interpret_visit_component(ast_node_component* node);
 ast_node* interpret_visit_variable(ast_node_variable* node);
 ast_node* interpret_visit_function_call(ast_node_function_call* node);

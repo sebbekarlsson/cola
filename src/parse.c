@@ -5,10 +5,10 @@
 #include "includes/data_type_utils.h"
 #include "includes/ast_node_binop.h"
 #include "includes/ast_node_unaryop.h"
-#include "includes/ast_node_number.h"
-#include "includes/ast_node_float.h"
 #include "includes/ast_node_empty.h"
 #include "includes/ast_node_char.h"
+#include "includes/ast_node_string.h"
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -31,6 +31,19 @@ void parse_eat(parse_state* state, int token_type) {
     }
 };
 
+ast_node_integer* parse_integer(parse_state* state, scope* sc) {
+    ast_node_integer* node = init_ast_node_integer(state->current_token, atoi(state->current_token->value));
+    parse_eat(state, _INTEGER);
+    ast_node_set_scope((ast_node*) node, (struct scope*) sc);
+    return node;
+}
+
+ast_node_float* parse_float(parse_state* state, scope* sc) {
+    ast_node_float* node = init_ast_node_float(state->current_token, atof(state->current_token->value));
+    parse_eat(state, _FLOAT);
+    ast_node_set_scope((ast_node*) node, (struct scope*) sc);
+    return node;
+}
 
 ast_node_return* parse_return(parse_state* state, scope* sc) {
     parse_eat(state, _RETURN);
@@ -180,20 +193,10 @@ ast_node* parse_factor(parse_state* state, scope* sc) {
         // invalid pointer type
         return (ast_node*) node;
 
-    } else if (tok->type == _NUMBER) {
-        parse_eat(state, _NUMBER);
-        ast_node_number* node = init_ast_node_number(tok);
-        ast_node_set_scope((ast_node*) node, (struct scope*) sc);
-        // invalid pointer type
-        return (ast_node*) node;
-
+    } else if (tok->type == _INTEGER) {
+        return (ast_node*) parse_integer(state, sc);
     } else if (tok->type == _FLOAT) {
-        parse_eat(state, _FLOAT);
-        ast_node_float* node = init_ast_node_float(tok, atof(tok->value));
-        ast_node_set_scope((ast_node*) node, (struct scope*) sc);
-        // invalid pointer type
-        return (ast_node*) node;
-    
+        return (ast_node*) parse_float(state, sc);
     } else if (tok->type == _CHAR) {
         parse_eat(state, _CHAR);
         ast_node_char* node = init_ast_node_char(tok, tok->value[0]);
@@ -201,6 +204,13 @@ ast_node* parse_factor(parse_state* state, scope* sc) {
         // invalid pointer type
         return (ast_node*) node;
 
+    } else if (tok->type == _STRING) {
+        parse_eat(state, _STRING);
+        ast_node_string* node = init_ast_node_string(tok, tok->value);
+        ast_node_set_scope((ast_node*) node, (struct scope*) sc);
+        // invalid pointer type
+        return (ast_node*) node;
+    
     } else if (tok->type == _TYPE_COMPONENT) {
         return (ast_node*) parse_component(state, sc);
     } else if (tok->type == _ID) {
@@ -316,7 +326,7 @@ ast_node* parse_statement(parse_state* state, scope* sc) {
         return (ast_node*) parse_function_definition(state, sc);
     }  else if (state->current_token->type == _FUNCTION_CALL) {
         return (ast_node*) parse_function_call(state, sc);
-    } else if (state->current_token->type == _ID || state->current_token->type == _NUMBER) {
+    } else if (state->current_token->type == _ID || state->current_token->type == _INTEGER || state->current_token->type == _FLOAT) {
         return parse_expr(state, sc);
     } else {
         return (void*)0;
@@ -400,25 +410,6 @@ ast_node_variable_definition* parse_variable_definition(parse_state* state, scop
     if (state->current_token->type == _EQUALS) {
         parse_eat(state, _EQUALS);
         value = parse_expr(state, sc);
-
-        // TODO: make this prettier
-        if (value->type != AST_TYPE_BINOP && value->type != AST_TYPE_VARIABLE && value->type != AST_TYPE_FUNCTION_CALL) {
-            if (data_type == _DATA_TYPE_INTEGER && (value->type != AST_TYPE_INTEGER && value->type != AST_TYPE_NUMBER)) {
-                error_in_parser("can only assign numbers to _DATA_TYPE_INTEGER");
-            }
-            if (data_type == _DATA_TYPE_FLOAT && (value->type != AST_TYPE_FLOAT && value->type != AST_TYPE_NUMBER)) {
-                error_in_parser("can only assign numbers to _DATA_TYPE_FLOAT");
-            }
-            if (data_type == _DATA_TYPE_STRING && value->type != AST_TYPE_STRING) {
-                error_in_parser("can only assign strings to _DATA_TYPE_STRING");
-            }
-            if (data_type == _DATA_TYPE_VOID && value->type != AST_TYPE_EMPTY) {
-                error_in_parser("can only assign empty to _DATA_TYPE_VOID");
-            }
-            if (data_type == _DATA_TYPE_CHAR && value->type != AST_TYPE_CHAR) {
-                error_in_parser("can only assign char to _DATA_TYPE_CHAR");
-            }
-        }
     } else {
         value = (ast_node*) init_ast_node_empty((void*)0);
     }

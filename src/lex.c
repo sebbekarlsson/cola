@@ -217,7 +217,7 @@ char* lex_parse_id(lex_state* state) {
 token* lex_parse_number(lex_state* state) {
     char* buff;
     char* charstr;
-    int type = _NUMBER;
+    int type = _INTEGER;
 
     buff = calloc(2, sizeof(char*));
     charstr = char_to_string(state->current_char);

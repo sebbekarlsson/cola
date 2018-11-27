@@ -9,7 +9,6 @@ typedef struct AST_NODE_STRUCT {
         AST_TYPE_EMPTY,
         AST_TYPE_BINOP,
         AST_TYPE_UNARYOP,
-        AST_TYPE_NUMBER,
         AST_TYPE_INTEGER,
         AST_TYPE_FLOAT,
         AST_TYPE_STRING,

@@ -28,9 +28,6 @@ ast_node* interpret_visit(ast_node* node) {
         case AST_TYPE_EMPTY:
             return interpret_visit_empty((ast_node_empty*)node);
             break;
-        case AST_TYPE_NUMBER:
-            return interpret_visit_number((ast_node_number*)node);
-            break;
         case AST_TYPE_CHAR:
             return interpret_visit_char((ast_node_char*)node);
             break;
@@ -48,6 +45,9 @@ ast_node* interpret_visit(ast_node* node) {
             break;
         case AST_TYPE_FLOAT:
             return interpret_visit_float((ast_node_float*)node);
+            break;
+        case AST_TYPE_STRING:
+            return interpret_visit_string((ast_node_string*)node);
             break;
         case AST_TYPE_COMPONENT:
             return interpret_visit_component((ast_node_component*)node);
@@ -174,7 +174,19 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
         // this causes undefined behaviour
         //free(definition->value);
         //definition->value = malloc(sizeof(right));
-        definition->value = interpret_visit(right);
+        ast_node* value = interpret_visit(right);
+
+        if (
+            (definition->data_type == _DATA_TYPE_INTEGER && value->type != AST_TYPE_INTEGER) ||
+            (definition->data_type == _DATA_TYPE_FLOAT && value->type != AST_TYPE_FLOAT) ||
+            (definition->data_type == _DATA_TYPE_VOID && value->type != AST_TYPE_EMPTY) ||
+            (definition->data_type == _DATA_TYPE_STRING && value->type != AST_TYPE_STRING)
+        ) {
+            error_in_interpreter("Wrong data_type");
+        }
+
+        definition->value = value;
+        return definition->value;
     }
 
     left = interpret_visit(node->left);
@@ -231,16 +243,20 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
         } else if (node->tok->type == _OP_MULTIPLY) {
             return (ast_node*) init_ast_node_integer(init_token(_FLOAT, node->value), left_float * right_integer);
         }
+    } else if (left->type == AST_TYPE_STRING && right->type == AST_TYPE_STRING) {
+        char* left_string = ((ast_node_string*) left)->value;
+        char* right_string = ((ast_node_string*) right)->value;
+
+        strcat(left_string, right_string);
+        
+        if (node->tok->type == _OP_PLUS) {
+            return (ast_node*) init_ast_node_string(init_token(_STRING, node->value), left_string);
+        }
+    } else {
+        error_in_interpreter("Invalid binop"); 
     }
 
     return (ast_node*) node;
-}
-
-ast_node* interpret_visit_number(ast_node_number* node) {
-   if (is_integer(node->tok->value))
-       return interpret_visit((ast_node*) init_ast_node_integer(node->tok, atoi(node->tok->value)));
-
-   return (ast_node*) node;
 }
 
 ast_node* interpret_visit_integer(ast_node_integer* node) {
@@ -248,6 +264,10 @@ ast_node* interpret_visit_integer(ast_node_integer* node) {
 }
 
 ast_node* interpret_visit_float(ast_node_float* node) {
+    return (ast_node*) node;
+}
+
+ast_node* interpret_visit_string(ast_node_string* node) {
     return (ast_node*) node;
 }
 
@@ -385,7 +405,17 @@ ast_node* interpret_visit_function_call(ast_node_function_call* node) {
 ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node) {
     node->value = interpret_visit(node->value);
 
-    // TODO: add type checking here
+    node->value = interpret_visit(node->value);
+
+    if (
+        (node->data_type == _DATA_TYPE_INTEGER && node->value->type != AST_TYPE_INTEGER) ||
+        (node->data_type == _DATA_TYPE_FLOAT && node->value->type != AST_TYPE_FLOAT) ||
+        (node->data_type == _DATA_TYPE_VOID && node->value->type != AST_TYPE_EMPTY) ||
+        (node->data_type == _DATA_TYPE_STRING && node->value->type != AST_TYPE_STRING)
+    ) {
+        error_in_interpreter("Wrong data_type");
+    }
+
     save_variable_definition(
         (scope*)ast_node_get_scope((
                 ast_node*)node
