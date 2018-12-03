@@ -19,7 +19,7 @@
 
     comp main use productlist {
         function void run {
-            foreach (product in productlist) {
+            foreach (productlist as product) {
                 print(product);    
             };
         };
