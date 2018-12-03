@@ -17,6 +17,7 @@ typedef struct SCOPE_STRUCT {
 scope* init_scope();
 
 void save_variable_definition(scope* sc, ast_node_variable_definition* node);
+void delete_variable_definition(scope* sc, char* name);
 void save_function_definition(scope* sc, ast_node_function_definition* node);
 void save_component(scope* sc, ast_node_component* node);
 

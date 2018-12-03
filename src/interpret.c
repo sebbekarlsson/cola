@@ -9,6 +9,13 @@
 
 extern scope* global_scope;
 
+/**
+ * Main visit function.
+ *
+ * @param ast_node* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit(ast_node* node) {
     if (!node) {
         printf("Encountered a NULL node\n");
@@ -39,6 +46,9 @@ ast_node* interpret_visit(ast_node* node) {
             break;
         case AST_TYPE_WHILE:
             return interpret_visit_while((ast_node_while*)node);
+            break;
+        case AST_TYPE_FOREACH:
+            return interpret_visit_foreach((ast_node_foreach*)node);
             break;
         case AST_TYPE_INTEGER:
             return interpret_visit_integer((ast_node_integer*)node);
@@ -76,10 +86,24 @@ ast_node* interpret_visit(ast_node* node) {
     return node;
 }
 
+/**
+ * Visit function for return statement
+ *
+ * @param ast_node_return* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_return(ast_node_return* node) {
     return interpret_visit(node->value);
 };
 
+/**
+ * Visit function for if statement
+ *
+ * @param ast_node_if* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_if(ast_node_if* node) {
     int expr_int = 0;
     ast_node* expr = interpret_visit(node->expr);
@@ -98,6 +122,13 @@ ast_node* interpret_visit_if(ast_node_if* node) {
     return (ast_node*) init_ast_node_empty(node->tok);
 };
 
+/**
+ * Visit function for else statement
+ *
+ * @param ast_node_else* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_else(ast_node_else* node) {
     if (node->ifnode) {
         return interpret_visit((ast_node*)node->ifnode);
@@ -106,7 +137,13 @@ ast_node* interpret_visit_else(ast_node_else* node) {
     }
 }
 
-
+/**
+ * Visit function for while node
+ *
+ * @param ast_node_while* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_while(ast_node_while* node) {
     int expr_int = 0;
     ast_node_integer* tmp_ast = (void*)0;
@@ -133,14 +170,85 @@ ast_node* interpret_visit_while(ast_node_while* node) {
     return (ast_node*) init_ast_node_empty(node->tok);
 }
 
+/**
+ * Visit function for foreach node
+ *
+ * @param ast_node_foreach* node
+ *
+ * @return ast_node*
+ */
+ast_node* interpret_visit_foreach(ast_node_foreach* node) {
+    ast_node* final_result = (void*)0;
+    ast_node* iterable = interpret_visit(node->iterable);
+    token* value_name_tok = node->value_name;
+    int counter = 0;
+    int size = 0;
+
+    // we currently only support strings...
+    // no other iterables exists yet! :)
+    //
+    // TODO: support more types
+    if (iterable->type == AST_TYPE_STRING) {
+        ast_node_string* iterable_string = (ast_node_string*) iterable;
+        size = strlen(iterable_string->value);
+
+        scope* target_scope = (scope*)ast_node_get_scope((ast_node*)node->body);
+
+        while (counter < size) {
+            char current_char = iterable_string->value[counter];
+            ast_node_char* current_item_char = init_ast_node_char(init_token(_CHAR, char_to_string(current_char)), current_char);
+
+            // this is quite ugly, it deletes the definition and
+            // sets the definition for every iteration in the loop.
+            //
+            // TODO: Make this prettier
+            delete_variable_definition(target_scope, value_name_tok->value);
+            ast_node_variable_definition* var_def = init_ast_node_variable_definition(
+                value_name_tok,
+                _DATA_TYPE_CHAR,
+                (ast_node*) current_item_char        
+            );
+            save_variable_definition(target_scope, var_def);
+
+            final_result = interpret_visit((ast_node*) node->body);
+            counter++;
+        }
+    } else {
+        error_in_interpreter("Does not know how to iterate data_type");
+    }
+
+    return final_result;
+}
+
+/**
+ * Visit function for char node
+ *
+ * @param ast_node_char* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_char(ast_node_char* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for empty node
+ *
+ * @param ast_node_empty* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_empty(ast_node_empty* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for compound node
+ *
+ * @param ast_node_compound* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_compound(ast_node_compound* node) {
     for (int i = 0; i < node->nodes->size; i++) {
         ast_node* child_node = (ast_node*)node->nodes->items[i];
@@ -155,6 +263,13 @@ ast_node* interpret_visit_compound(ast_node_compound* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for binary operation node
+ *
+ * @param ast_node_binop* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_binop(ast_node_binop* node) {
     ast_node* left = node->left;
     ast_node* right = interpret_visit(node->right);
@@ -298,18 +413,46 @@ ast_node* interpret_visit_binop(ast_node_binop* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for integer node
+ *
+ * @param ast_node_integer* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_integer(ast_node_integer* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for float node
+ *
+ * @param ast_node_float* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_float(ast_node_float* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for string node
+ *
+ * @param ast_node_string* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_string(ast_node_string* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for component node
+ *
+ * @param ast_node_component* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_component(ast_node_component* node) {
     save_component((scope*)ast_node_get_scope((ast_node*)node), node);
     
@@ -386,6 +529,13 @@ ast_node* interpret_visit_component(ast_node_component* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for vecptr node
+ *
+ * @param ast_node_vecptr* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_vecptr(ast_node_vecptr* node) {
     ast_node* target = interpret_visit(node->target);
     ast_node* index = interpret_visit(node->index);
@@ -403,6 +553,13 @@ ast_node* interpret_visit_vecptr(ast_node_vecptr* node) {
     return (ast_node*) interpret_visit(node->target);
 }
 
+/**
+ * Visit function for variable node
+ *
+ * @param ast_node_variable* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_variable(ast_node_variable* node) {
 
     ast_node_variable_definition* definition = get_variable_definition(
@@ -432,6 +589,13 @@ ast_node* interpret_visit_variable(ast_node_variable* node) {
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for function call node
+ *
+ * @param ast_node_function_call* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_function_call(ast_node_function_call* node) {
     ast_node_function_definition* definition = get_function_definition(
         (scope*) ast_node_get_scope((ast_node*) node),
@@ -467,6 +631,13 @@ ast_node* interpret_visit_function_call(ast_node_function_call* node) {
     }
 }
 
+/**
+ * Visit function for variable definition node
+ *
+ * @param ast_node_variable_definition* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node) {
     node->value = interpret_visit(node->value);
 
@@ -491,11 +662,14 @@ ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node
     return (ast_node*) node;
 }
 
+/**
+ * Visit function for function definition node
+ *
+ * @param ast_node_function_definition* node
+ *
+ * @return ast_node*
+ */
 ast_node* interpret_visit_function_definition(ast_node_function_definition* node) {
-    //if (node->body) {
-        // visit body
-    //}
-
     save_function_definition(
         (scope*)ast_node_get_scope((
                 ast_node*)node

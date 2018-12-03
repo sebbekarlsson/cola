@@ -6,6 +6,7 @@
 #include "ast_node_if.h"
 #include "ast_node_else.h"
 #include "ast_node_while.h"
+#include "ast_node_foreach.h"
 #include "ast_node_return.h"
 #include "ast_node_assign.h"
 #include "ast_node_compound.h"
@@ -43,6 +44,8 @@ ast_node_if* parse_if(parse_state* state, scope* sc);
 ast_node_else* parse_else(parse_state* state, scope* sc);
 
 ast_node_while* parse_while(parse_state* state, scope* sc);
+
+ast_node_foreach* parse_foreach(parse_state* state, scope* sc);
 
 ast_node_variable* parse_variable(parse_state* state, scope* sc);
 

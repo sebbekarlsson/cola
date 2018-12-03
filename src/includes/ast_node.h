@@ -23,6 +23,7 @@ typedef struct AST_NODE_STRUCT {
         AST_TYPE_ELSE,
         AST_TYPE_ASSIGN,
         AST_TYPE_WHILE,
+        AST_TYPE_FOREACH,
         AST_TYPE_RETURN,
         AST_TYPE_VECPTR
     } type;

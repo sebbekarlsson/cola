@@ -32,6 +32,8 @@ typedef enum {
     _EQUALS = 28,
     _FUNCTION_CALL = 29,
     _WHILE = 30,
+    _FOREACH = 31,
+    _AS = 32,
     _VECPTR,
     _LBRACKET,
     _RBRACKET,

@@ -17,6 +17,21 @@ void save_variable_definition(scope* sc, ast_node_variable_definition* node) {
     ss_vector_append(sc->variables, (ast_node*) node);
 }
 
+void delete_variable_definition(scope* sc, char* name) {
+    ast_node_variable_definition* definition = (void*)0;
+
+    for (int i = 0; i < sc->variables->size; i++) {
+        definition = (ast_node_variable_definition*) sc->variables->items[i];
+
+        if (strcmp(definition->tok->value, name) == 0) {
+            free(sc->variables->items[i]);
+            sc->variables->size -=1;
+        } else {
+            definition = (void*)0;
+        }
+    } 
+}
+
 void save_function_definition(scope* sc, ast_node_function_definition* node) {
     ss_vector_append(sc->functions, (ast_node*) node);
 }

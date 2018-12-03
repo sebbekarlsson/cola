@@ -22,6 +22,10 @@ token* parse_id(lex_state* state, token* token) {
         token->type = _ELSE;
     } else if (strcmp(token->value, "while") == 0) {
         token->type = _WHILE;
+    } else if (strcmp(token->value, "foreach") == 0) {
+        token->type = _FOREACH;
+    } else if (strcmp(token->value, "as") == 0) {
+        token->type = _AS;
     } else if (strcmp(token->value, "function") == 0) {
         token->type = _TYPE_FUNCTION;
     } else if (strcmp(token->value, "return") == 0) {

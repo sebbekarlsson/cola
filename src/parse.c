@@ -99,6 +99,30 @@ ast_node_while* parse_while(parse_state* state, scope* sc) {
     return while_ast;
 }
 
+ast_node_foreach* parse_foreach(parse_state* state, scope* sc) {
+    parse_eat(state, _FOREACH);
+    parse_eat(state, _LPAREN);
+    ast_node* iterable = parse_expr(state, sc);
+    parse_eat(state, _AS);
+    token* value_name_tok = state->current_token;
+    parse_eat(state, _ID);
+    parse_eat(state, _RPAREN);
+    parse_eat(state, _LBRACE);
+    ast_node_compound* body = parse_compound(state, sc);
+    parse_eat(state, _RBRACE);
+
+    ast_node_foreach* foreach_ast = init_ast_node_foreach(
+        value_name_tok,
+        iterable,
+        value_name_tok,
+        body        
+    );
+
+    ast_node_set_scope((ast_node*) foreach_ast, (struct scope*) sc);
+
+    return foreach_ast;
+}
+
 ast_node_else* parse_else(parse_state* state, scope* sc) {
     parse_eat(state, _ELSE);
     ast_node_if* ifnode = (void*)0;
@@ -345,6 +369,8 @@ ast_node* parse_statement(parse_state* state, scope* sc) {
         return (ast_node*) parse_if(state, sc);
     } else if (state->current_token->type == _WHILE) {
         return (ast_node*) parse_while(state, sc);
+    } else if (state->current_token->type == _FOREACH) {
+        return (ast_node*) parse_foreach(state, sc);
     } else if (state->current_token->type == _DATA_TYPE) {
         return (ast_node*) parse_variable_definition(state, sc);
     } else if (state->current_token->type == _TYPE_FUNCTION) {

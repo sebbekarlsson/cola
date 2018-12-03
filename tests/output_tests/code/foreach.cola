@@ -1,0 +1,5 @@
+string mystr = "hello";
+
+foreach (mystr as x) {
+    print(x);
+};

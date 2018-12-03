@@ -67,3 +67,7 @@ def test_return_cola():
 
 def test_vecptr_cola():
     assert binexec('vecptr.cola') == 'h\ne\nl\nl\no'
+
+
+def test_foreach_cola():
+    assert binexec('foreach.cola') == 'h\ne\nl\nl\no'
