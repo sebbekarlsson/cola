@@ -576,6 +576,12 @@ ast_node* interpret_visit_vecptr(ast_node_vecptr* node) {
             char* strval = char_to_string(value);
             return (ast_node*) init_ast_node_char(init_token(_CHAR, strval), value);
         }
+    } else if (target->type == AST_TYPE_VECTOR) {
+        ast_node_vector* target_vector = (ast_node_vector*) target;
+        if (index->type == AST_TYPE_INTEGER) {
+            ast_node_integer* index_integer = (ast_node_integer*) index;
+            return (ast_node*) target_vector->vector->items[index_integer->value];
+        }
     }
 
     return (ast_node*) interpret_visit(node->target);
