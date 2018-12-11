@@ -9,7 +9,8 @@ token* parse_id(lex_state* state, token* token) {
         strcmp(token->value, "struct") == 0 ||
         strcmp(token->value, "void") == 0 ||
         strcmp(token->value, "float") == 0 ||
-        strcmp(token->value, "char") == 0
+        strcmp(token->value, "char") == 0 ||
+        strcmp(token->value, "vector") == 0
     ) {
         token->type = _DATA_TYPE;
     } else if (strcmp(token->value, "comp") == 0) {

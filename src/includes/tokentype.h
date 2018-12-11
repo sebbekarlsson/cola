@@ -47,6 +47,7 @@ typedef enum {
     _DATA_TYPE_VOID,
     _DATA_TYPE_STRUCT,
     _DATA_TYPE_STRING,
+    _DATA_TYPE_VECTOR,
     _TYPE_COMPONENT,
     _TYPE_FUNCTION
 } tokentype;

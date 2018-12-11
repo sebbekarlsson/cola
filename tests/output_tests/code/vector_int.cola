@@ -1,0 +1,5 @@
+vector<int> x = [255, 0, 128];
+
+foreach(x as y) {
+    print(y);
+};

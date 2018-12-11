@@ -71,3 +71,7 @@ def test_vecptr_cola():
 
 def test_foreach_cola():
     assert binexec('foreach.cola') == 'h\ne\nl\nl\no'
+
+
+def test_vector_int_cola():
+    assert binexec('vector_int.cola') == '255\n0\n128'

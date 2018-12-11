@@ -65,6 +65,9 @@ ast_node* interpret_visit(ast_node* node) {
         case AST_TYPE_VECPTR:
             return interpret_visit_vecptr((ast_node_vecptr*)node);
             break;
+        case AST_TYPE_VECTOR:
+            return interpret_visit_vector((ast_node_vector*)node);
+            break;
         case AST_TYPE_VARIABLE:
             return interpret_visit_variable((ast_node_variable*)node);
             break;
@@ -184,6 +187,9 @@ ast_node* interpret_visit_foreach(ast_node_foreach* node) {
     int counter = 0;
     int size = 0;
 
+
+    scope* target_scope = (scope*)ast_node_get_scope((ast_node*)node->body);
+
     // we currently only support strings...
     // no other iterables exists yet! :)
     //
@@ -192,7 +198,6 @@ ast_node* interpret_visit_foreach(ast_node_foreach* node) {
         ast_node_string* iterable_string = (ast_node_string*) iterable;
         size = strlen(iterable_string->value);
 
-        scope* target_scope = (scope*)ast_node_get_scope((ast_node*)node->body);
 
         while (counter < size) {
             char current_char = iterable_string->value[counter];
@@ -213,6 +218,29 @@ ast_node* interpret_visit_foreach(ast_node_foreach* node) {
             final_result = interpret_visit((ast_node*) node->body);
             counter++;
         }
+    } else if (iterable->type == AST_TYPE_VECTOR) {
+        ast_node_vector* iterable_vector = (ast_node_vector*) iterable;
+        size = iterable_vector->vector->size;
+
+        while (counter < size) {
+            ast_node* current_node = iterable_vector->vector->items[counter];
+
+            // this is quite ugly, it deletes the definition and
+            // sets the definition for every iteration in the loop.
+            //
+            // TODO: Make this prettier
+            delete_variable_definition(target_scope, value_name_tok->value);
+            ast_node_variable_definition* var_def = init_ast_node_variable_definition(
+                value_name_tok,
+                iterable_vector->data_type,
+                current_node 
+            );
+            save_variable_definition(target_scope, var_def);
+
+            final_result = interpret_visit((ast_node*) node->body);
+            counter++;
+        }
+
     } else {
         error_in_interpreter("Does not know how to iterate data_type");
     }
@@ -551,6 +579,17 @@ ast_node* interpret_visit_vecptr(ast_node_vecptr* node) {
     }
 
     return (ast_node*) interpret_visit(node->target);
+}
+
+/**
+ * Visit function for vector node
+ *
+ * @param ast_node_vector* node
+ *
+ * @return ast_node*
+ */
+ast_node* interpret_visit_vector(ast_node_vector* node) {
+    return (ast_node*) node;
 }
 
 /**

@@ -13,6 +13,8 @@ int name_to_data_type(char* name) {
         return _DATA_TYPE_CHAR;
     } else if (strcmp(name, "string") == 0) {
         return _DATA_TYPE_STRING;
+    } else if (strcmp(name, "vector") == 0) {
+        return _DATA_TYPE_VECTOR;
     } else {
         return -1;
     }

@@ -55,6 +55,31 @@ ast_node_vecptr* parse_vecptr(parse_state* state, scope* sc) {
     return vecptr_node;
 }
 
+
+ast_node_vector* parse_vector(parse_state* state, scope* sc) {
+    parse_eat(state, _LBRACKET);
+    ss_vector* items = ss_init_vector(sizeof(ast_node));
+    
+    ss_vector_append(items, (ast_node*) parse_expr(state, sc));
+    
+    while (state->current_token->type == _COMMA) {
+        parse_eat(state, _COMMA);
+        ss_vector_append(items, (ast_node*) parse_expr(state, sc));
+    }
+
+    parse_eat(state, _RBRACKET);
+
+    ast_node_vector* node = init_ast_node_vector(
+        state->current_token,
+        0,
+        items
+    );
+
+    ast_node_set_scope((ast_node*) node, (struct scope*) sc);
+
+    return node;
+}
+
 ast_node_float* parse_float(parse_state* state, scope* sc) {
     ast_node_float* node = init_ast_node_float(state->current_token, atof(state->current_token->value));
     parse_eat(state, _FLOAT);
@@ -264,6 +289,10 @@ ast_node* parse_factor(parse_state* state, scope* sc) {
         ast_node_set_scope((ast_node*) node, (struct scope*) sc);
         parse_eat(state, _RPAREN);
         return node;
+    } else if (tok->type == _LBRACKET) {
+        ast_node_vector* node = parse_vector(state, sc);
+        ast_node_set_scope((ast_node*) node, (struct scope*) sc);
+        return (ast_node*) node;
     } else {
         printf("Unexpected token_type: `%d`\n", tok->type);
         return (void*)0;
@@ -455,6 +484,15 @@ ast_node_variable_definition* parse_variable_definition(parse_state* state, scop
     ast_node* value;
 
     parse_eat(state, _DATA_TYPE);
+
+    if (data_type == _DATA_TYPE_VECTOR) {
+        parse_eat(state, _LESS_THAN);
+        char* vector_data_type_name = state->current_token->value;
+        parse_eat(state, _DATA_TYPE);
+        int vector_data_type = name_to_data_type(vector_data_type_name);
+        parse_eat(state, _LARGER_THAN);
+    }
+
     token* tok = state->current_token;
     parse_eat(state, _ID);
 
