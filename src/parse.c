@@ -487,9 +487,9 @@ ast_node_variable_definition* parse_variable_definition(parse_state* state, scop
 
     if (data_type == _DATA_TYPE_VECTOR) {
         parse_eat(state, _LESS_THAN);
-        char* vector_data_type_name = state->current_token->value;
+        //char* vector_data_type_name = state->current_token->value;
         parse_eat(state, _DATA_TYPE);
-        int vector_data_type = name_to_data_type(vector_data_type_name);
+        //int vector_data_type = name_to_data_type(vector_data_type_name);
         parse_eat(state, _LARGER_THAN);
     }
 

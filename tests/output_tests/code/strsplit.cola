@@ -1,0 +1,4 @@
+string x = "john,doe,21";
+vector<string> items = strsplit(x, ",");
+
+foreach (items as item) { print(item); };

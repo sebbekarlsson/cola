@@ -9,6 +9,7 @@
 #include "includes/ast_node_empty.h"
 #include "includes/ast_node_char.h"
 #include "includes/ast_node_string.h"
+#include "includes/ast_node_vector.h"
 #include <stdio.h>
 
 /**
@@ -73,6 +74,63 @@ ast_node* _strlen(ss_vector* args) {
 };
 
 /**
+ * Built-in method to split a string.
+ *
+ * param string str
+ * param string delim
+ *
+ * --------
+ *
+ * @param ss_vector* args
+ *
+ * @return ast_node*
+ */
+ast_node* _strsplit(ss_vector* args) {
+    ast_node* _node0 = (ast_node*)args->items[0];
+    ast_node* _node1 = (ast_node*)args->items[1];
+
+    if (_node0->type != AST_TYPE_STRING)
+        return (ast_node*) init_ast_node_empty((void*)0);
+
+    if (_node1->type != AST_TYPE_STRING)
+        return (ast_node*) init_ast_node_empty((void*)0);
+
+
+    ast_node_string* node_string0 = (ast_node_string*) _node0;
+    ast_node_string* node_string1 = (ast_node_string*) _node1;
+
+    ss_vector* items = ss_init_vector(sizeof(ast_node));
+
+    char* token;
+    token = strtok(node_string0->value, node_string1->value);
+
+    ast_node_string* item_str = init_ast_node_string(
+        (void*)0,
+        token
+    );
+    ss_vector_append(items, (ast_node*) item_str);
+
+    while (token != NULL) {
+        token = strtok(NULL, node_string1->value);
+
+        if (!token)
+            continue;
+
+        ast_node_string* item_str = init_ast_node_string(
+            (void*)0,
+            token
+        );
+        ss_vector_append(items, (ast_node*) item_str);
+    }
+
+    return (ast_node*) init_ast_node_vector(
+        (void*)0,
+        _DATA_TYPE_VECTOR,
+        items        
+    );
+};
+
+/**
  * This method is used to populate a scope with built-in:s.
  *
  * param string
@@ -106,4 +164,14 @@ void default_scope_initialize(scope* sc) {
 
     strlen_definition->call = _strlen;
     save_function_definition(sc, strlen_definition);
+
+    ast_node_function_definition* strsplit_definition = init_ast_node_function_definition(
+        init_token(_ID, "strsplit"),
+        _DATA_TYPE_VECTOR,
+        args,
+        (void*)0
+    );
+
+    strsplit_definition->call = _strsplit;
+    save_function_definition(sc, strsplit_definition);
 }

@@ -75,3 +75,7 @@ def test_foreach_cola():
 
 def test_vector_int_cola():
     assert binexec('vector_int.cola') == '255\n0\n128\n255'
+
+
+def test_strsplit_cola():
+    assert binexec('strsplit.cola') == 'john\ndoe\n21'
