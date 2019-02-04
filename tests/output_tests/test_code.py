@@ -79,3 +79,7 @@ def test_vector_int_cola():
 
 def test_strsplit_cola():
     assert binexec('strsplit.cola') == 'john\ndoe\n21'
+
+
+def test_interpreter_instr_include_main_cola():
+    assert binexec('interpreter_instr_include/main.cola') == 'hello\nworld'

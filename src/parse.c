@@ -390,7 +390,9 @@ ast_node* parse_expr(parse_state* state, scope* sc) {
 }
 
 ast_node* parse_statement(parse_state* state, scope* sc) {
-    if (state->current_token->type == _RETURN) {
+    if (state->current_token->type == _INTERPRETER_INSTR) {
+        return (ast_node*) parse_interpreter_instr(state, sc);
+    } else if (state->current_token->type == _RETURN) {
         return (ast_node*) parse_return(state, sc);
     } else if (state->current_token->type == _TYPE_COMPONENT) {
         return (ast_node*) parse_component(state, sc);
@@ -552,6 +554,30 @@ ast_node_function_definition* parse_function_definition(parse_state* state, scop
 
     return definition;
 };
+
+ast_node_interpreter_instr* parse_interpreter_instr(parse_state* state, scope* sc) {
+    token* tok = state->current_token;
+    char* instruction_name = tok->value;
+
+    // TODO: make this better, give the user some information about which
+    // instruction name that was unknown.
+    if (strcmp(instruction_name, "include") != 0)
+        error_in_parser("Unknown instruction name");
+
+    parse_eat(state, _INTERPRETER_INSTR);
+    char* instruction_value = state->current_token->value;
+    parse_eat(state, _STRING);
+
+    ast_node_interpreter_instr* instr = init_ast_node_interpreter_instr(
+        tok,
+        instruction_name,
+        instruction_value        
+    );
+    
+    ast_node_set_scope((ast_node*) instr, (struct scope*)sc);
+
+    return instr;
+}
 
 ast_node_compound* parse_parse(parse_state* state, scope* sc) {
     return parse_compound(state, sc);

@@ -21,6 +21,7 @@
 #include "ast_node_function_call.h"
 #include "ast_node_variable_definition.h"
 #include "ast_node_function_definition.h"
+#include "ast_node_interpreter_instr.h"
 
 
 /*typedef struct INTERPRET_STATE_STRUCT {
@@ -52,5 +53,6 @@ ast_node* interpret_visit_variable(ast_node_variable* node);
 ast_node* interpret_visit_function_call(ast_node_function_call* node);
 ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node);
 ast_node* interpret_visit_function_definition(ast_node_function_definition* node);
+ast_node* interpret_visit_interpreter_instr(ast_node_interpreter_instr* node);
 
 #endif

@@ -3,6 +3,7 @@
 #include "includes/ast_node.h"
 #include "includes/error.h"
 #include "includes/scope.h"
+#include "includes/eval.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -17,10 +18,8 @@ extern scope* global_scope;
  * @return ast_node*
  */
 ast_node* interpret_visit(ast_node* node) {
-    if (!node) {
-        printf("Encountered a NULL node\n");
-        return (void*) 0;
-    }
+    if (!node)
+        error_in_interpreter("Encountered a NULL node\n");
     
     switch (node->type) {
         case AST_TYPE_RETURN:
@@ -79,6 +78,9 @@ ast_node* interpret_visit(ast_node* node) {
             break;
         case AST_TYPE_FUNCTION_DEFINITION:
             return interpret_visit_function_definition((ast_node_function_definition*)node);
+            break;
+        case AST_TYPE_INTERPRETER_INSTR:
+            return interpret_visit_interpreter_instr((ast_node_interpreter_instr*)node);
             break;
         default:
             printf("Unhandled AST node (%d)\n", node->type);
@@ -699,7 +701,7 @@ ast_node* interpret_visit_variable_definition(ast_node_variable_definition* node
 
     save_variable_definition(
         (scope*)ast_node_get_scope((
-                ast_node*)node
+            ast_node*)node
          ),
         node
     );
@@ -723,4 +725,23 @@ ast_node* interpret_visit_function_definition(ast_node_function_definition* node
     );
 
     return (ast_node*) node;
+}
+
+/** Visit interpreter instruction node
+ *
+ * @param ast_node_interpreter_instr* node
+ *
+ * @return ast_node*
+ */
+ast_node* interpret_visit_interpreter_instr(ast_node_interpreter_instr* node) {
+    struct scope* sc = ast_node_get_scope((ast_node*) node);
+
+    int eval_i = eval_file_contents(node->value, (scope**) &sc);
+    char eval_s[2]; // string that will hold int
+    sprintf(eval_s, "%d", eval_i); // int to string conversion
+
+    return (ast_node*) init_ast_node_integer(
+        init_token(_INTEGER, eval_s),
+        eval_i
+    );
 }

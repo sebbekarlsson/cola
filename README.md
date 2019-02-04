@@ -12,7 +12,7 @@
         };
 
         function array<map> yields {
-            return @get_products();    
+            return get_products();    
         };
     };
 
@@ -51,13 +51,13 @@
 > The `yields` method in a component is used to make a component act as if
 > it was another data-type. For example:
 
-    component PI {
+    comp PI {
         function float yields {
             return 3.14;
         };    
     };
 
-    component main use PI {
+    comp main use PI {
         function void run {
             print(PI * 0.5);    
         };    
@@ -65,9 +65,15 @@
 
 > ... here, the `PI` component is treated as if it was a float.
 
-### The @-character
-> The `@` character is exactly like `this` in object-oriented programming
-> languages.
+### Interpreter instructions
+> You can include other files using interpreter instructions, it looks
+> very much like in `C`:
+
+    #include "somefile.cola"
+
+
+    comp main {
+        ...
 
 ## Data-types
 > The existing data-types are:  

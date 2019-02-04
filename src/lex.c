@@ -99,11 +99,6 @@ token* lex_get_next_token(lex_state* state) {
             return init_token(_COMMA, str);
         }
 
-        else if (state->current_char == '@') {
-            lex_advance(state);
-            return init_token(_AT, str);
-        }
-
         else if (state->current_char == '<') {
             lex_advance(state);
             return init_token(_LESS_THAN, str);
@@ -138,6 +133,14 @@ token* lex_get_next_token(lex_state* state) {
         else if (state->current_char == '"') {
             free(str);
             return init_token(_STRING, lex_parse_string(state));
+        }
+
+        else if (state->current_char == '#') {
+            free(str);
+            lex_advance(state);
+            if (state->current_char != '!') {
+                return init_token(_INTERPRETER_INSTR, lex_parse_id(state));
+            }
         }
 
         else if (state->current_char == '\'') {

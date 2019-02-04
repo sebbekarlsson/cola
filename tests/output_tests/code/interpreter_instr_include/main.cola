@@ -1,0 +1,8 @@
+#include "tests/output_tests/code/interpreter_instr_include/library.cola";
+
+
+comp main {
+    function void run {
+        print("world");
+    };
+};

@@ -19,6 +19,7 @@
 #include "ast_node_function_call.h"
 #include "ast_node_variable_definition.h"
 #include "ast_node_function_definition.h"
+#include "ast_node_interpreter_instr.h"
 
 
 typedef struct PARSE_STATE_STRUCT {
@@ -75,5 +76,7 @@ ast_node_compound* parse_parse(parse_state* state, scope* sc);
 ast_node_variable_definition* parse_variable_definition(parse_state* state, scope* sc);
 
 ast_node_function_definition* parse_function_definition(parse_state* state, scope* sc);
+
+ast_node_interpreter_instr* parse_interpreter_instr(parse_state* state, scope* sc);
 
 #endif
